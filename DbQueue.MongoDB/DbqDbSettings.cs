@@ -10,6 +10,7 @@ namespace DbQueue.MongoDB
         public MongoDatabaseSettings? DatabaseSettings { get; set; }
         public string CollectionName { get; set; } = "queues";
         public MongoCollectionSettings? CollectionSettings { get; set; }
+        public int LockRetries { get; set; } = 3;
         public TimeSpan AutoUnlockDelay { get; set; } = TimeSpan.FromMinutes(5);
     }
 }

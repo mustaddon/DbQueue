@@ -1,4 +1,5 @@
-﻿using DbQueue.Abstractions;
+﻿using DbQueue;
+using DbQueue.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -14,21 +15,24 @@ namespace Test.Common
         public Tests(IServiceProvider serviceProvider)
         {
             _dbq = serviceProvider.GetRequiredService<IDbQueue>();
+            _dbqSettings = serviceProvider.GetRequiredService<DbqSettings>();
         }
 
         readonly IDbQueue _dbq;
-        static readonly string _queueName = "common_tests";
+        readonly DbqSettings _dbqSettings;
 
 
         public async Task TestPushBytes()
         {
-            await _dbq.Clear(_queueName);
+            var queueName = nameof(TestPushBytes);
+
+            await _dbq.Clear(queueName);
 
             var data = Utils.GenerateData();
 
-            await _dbq.Push(_queueName, data);
+            await _dbq.Push(queueName, data);
 
-            var result = await _dbq.Pop<byte[]>(_queueName);
+            var result = await _dbq.Pop<byte[]>(queueName);
 
             Assert.IsTrue(result.Length == data.Length, nameof(data.Length));
             Assert.IsFalse(result.Select((x, i) => data[i] == x).Any(x => !x), nameof(data));
@@ -36,13 +40,15 @@ namespace Test.Common
 
         public async Task TestPushStream()
         {
-            await _dbq.Clear(_queueName);
+            var queueName = nameof(TestPushStream);
+
+            await _dbq.Clear(queueName);
 
             var data = Utils.GenerateData();
             using var stream = new MemoryStream(data);
-            await _dbq.Push(_queueName, stream);
+            await _dbq.Push(queueName, stream);
 
-            var enumerator = await _dbq.Pop(_queueName);
+            var enumerator = await _dbq.Pop(queueName);
 
             var content = new List<byte[]>();
             while (await enumerator.MoveNextAsync())
@@ -56,32 +62,36 @@ namespace Test.Common
 
         public async Task TestPushText()
         {
-            await _dbq.Clear(_queueName);
+            var queueName = nameof(TestPushText);
+
+            await _dbq.Clear(queueName);
 
             var text = Utils.GenerateText();
-            await _dbq.Push(_queueName, text);
+            await _dbq.Push(queueName, text);
 
-            var result = await _dbq.Pop<string>(_queueName);
+            var result = await _dbq.Pop<string>(queueName);
 
             Assert.IsTrue(text.Equals(result));
         }
 
         public async Task TestPushObject()
         {
-            await _dbq.Clear(_queueName);
+            var queueName = nameof(TestPushObject);
+
+            await _dbq.Clear(queueName);
 
             var obj = Utils.GenerateObject();
 
-            await _dbq.Push(_queueName, obj);
+            await _dbq.Push(queueName, obj);
 
-            var result = await _dbq.Pop<TestObject>(_queueName);
+            var result = await _dbq.Pop<TestObject>(queueName);
 
             Assert.IsTrue(obj.Equals(result));
         }
 
         public async Task TestPushManyQueues()
         {
-            var queueNames = Enumerable.Range(1, 10).Select(i => $"{_queueName}_{i}");
+            var queueNames = Enumerable.Range(1, 10).Select(i => $"{nameof(TestPushManyQueues)}_{i}");
 
             foreach (var queueName in queueNames)
                 await _dbq.Clear(queueName);
@@ -99,119 +109,136 @@ namespace Test.Common
 
         public async Task TestPop()
         {
-            await _dbq.Clear(_queueName);
+            var queueName = nameof(TestPop);
+
+            await _dbq.Clear(queueName);
 
             var text = Utils.GenerateText();
-            await _dbq.Push(_queueName, text);
+            await _dbq.Push(queueName, text);
 
-            var result = await _dbq.Pop<string>(_queueName);
+            var result = await _dbq.Pop<string>(queueName);
 
             Assert.IsTrue(text.Equals(result));
-            Assert.IsTrue(await _dbq.Count(_queueName) == 0, nameof(_dbq.Count));
+            Assert.IsTrue(await _dbq.Count(queueName) == 0, nameof(_dbq.Count));
         }
 
         public async Task TestPeek()
         {
-            await _dbq.Clear(_queueName);
+            var queueName = nameof(TestPeek);
+
+            await _dbq.Clear(queueName);
 
             var text = Utils.GenerateText();
-            await _dbq.Push(_queueName, text);
+            await _dbq.Push(queueName, text);
 
-            var result = await _dbq.Peek<string>(_queueName);
+            var result = await _dbq.Peek<string>(queueName);
 
             Assert.IsTrue(text.Equals(result));
-            Assert.IsTrue(await _dbq.Count(_queueName) == 1, nameof(_dbq.Count));
+            Assert.IsTrue(await _dbq.Count(queueName) == 1, nameof(_dbq.Count));
         }
 
         public async Task TestPopMany()
         {
-            await _dbq.Clear(_queueName);
+            var queueName = nameof(TestPopMany);
+
+            await _dbq.Clear(queueName);
 
             var datas = Enumerable.Range(1, 10).Select(i => Utils.GenerateData()).ToArray();
 
             foreach (var data in datas)
-                await _dbq.Push(_queueName, data);
+                await _dbq.Push(queueName, data);
 
             var index = 0;
-            await foreach (var result in _dbq.PopMany<byte[]>(_queueName))
+            await foreach (var result in _dbq.PopMany<byte[]>(queueName))
             {
-                Assert.IsTrue(result.Length == datas[index].Length, nameof(result.Length));
-                Assert.IsFalse(result.Select((x, i) => datas[index][i] == x).Any(x => !x), nameof(result));
+                var data = datas[_dbqSettings.StackMode ? datas.Length - index - 1 : index];
+                Assert.IsTrue(result.Length == data.Length, nameof(result.Length));
+                Assert.IsFalse(result.Select((x, i) => data[i] == x).Any(x => !x), nameof(result));
                 index++;
             }
 
-            Assert.IsTrue(await _dbq.Count(_queueName) == 0, nameof(_dbq.Count));
+            Assert.IsTrue(await _dbq.Count(queueName) == 0, nameof(_dbq.Count));
         }
 
         public async Task TestPopManyGeneric()
         {
-            await _dbq.Clear(_queueName);
+            var queueName = nameof(TestPopManyGeneric);
+
+            await _dbq.Clear(queueName);
 
             var texts = Enumerable.Range(1, 10).Select(i => Utils.GenerateText()).ToArray();
 
             foreach (var text in texts)
-                await _dbq.Push(_queueName, text);
+                await _dbq.Push(queueName, text);
 
             var index = 0;
-            await foreach (var result in _dbq.PopMany<string>(_queueName))
+            await foreach (var result in _dbq.PopMany<string>(queueName))
             {
-                Assert.IsTrue(texts[index].Equals(result));
+                var text = texts[_dbqSettings.StackMode ? texts.Length - index - 1 : index];
+                Assert.IsTrue(text.Equals(result));
                 index++;
             }
 
-            Assert.IsTrue(await _dbq.Count(_queueName) == 0, nameof(_dbq.Count));
+            Assert.IsTrue(await _dbq.Count(queueName) == 0, nameof(_dbq.Count));
         }
 
         public async Task TestPeekMany()
         {
-            await _dbq.Clear(_queueName);
+            var queueName = nameof(TestPeekMany);
+
+            await _dbq.Clear(queueName);
 
             var datas = Enumerable.Range(1, 10).Select(i => Utils.GenerateData()).ToArray();
 
             foreach (var data in datas)
-                await _dbq.Push(_queueName, data);
+                await _dbq.Push(queueName, data);
 
             var index = 0;
-            await foreach (var result in _dbq.PeekMany<byte[]>(_queueName))
+            await foreach (var result in _dbq.PeekMany<byte[]>(queueName))
             {
-                Assert.IsTrue(result.Length == datas[index].Length, nameof(result.Length));
-                Assert.IsFalse(result.Select((x, i) => datas[index][i] == x).Any(x => !x), nameof(result));
+                var data = datas[_dbqSettings.StackMode ? datas.Length - index - 1 : index];
+                Assert.IsTrue(result.Length == data.Length, nameof(result.Length));
+                Assert.IsFalse(result.Select((x, i) => data[i] == x).Any(x => !x), nameof(result));
                 index++;
             }
 
-            Assert.IsTrue(await _dbq.Count(_queueName) == datas.Length, nameof(_dbq.Count));
+            Assert.IsTrue(await _dbq.Count(queueName) == datas.Length, nameof(_dbq.Count));
         }
 
         public async Task TestPeekManyGeneric()
         {
-            await _dbq.Clear(_queueName);
+            var queueName = nameof(TestPeekManyGeneric);
+
+            await _dbq.Clear(queueName);
 
             var texts = Enumerable.Range(1, 10).Select(i => Utils.GenerateText()).ToArray();
 
             foreach (var text in texts)
-                await _dbq.Push(_queueName, text);
+                await _dbq.Push(queueName, text);
 
             var index = 0;
-            await foreach (var result in _dbq.PeekMany<string>(_queueName))
+            await foreach (var result in _dbq.PeekMany<string>(queueName))
             {
-                Assert.IsTrue(texts[index].Equals(result));
+                var text = texts[_dbqSettings.StackMode ? texts.Length - index - 1 : index];
+                Assert.IsTrue(text.Equals(result));
                 index++;
             }
 
-            Assert.IsTrue(await _dbq.Count(_queueName) == texts.Length, nameof(_dbq.Count));
+            Assert.IsTrue(await _dbq.Count(queueName) == texts.Length, nameof(_dbq.Count));
         }
 
         public async Task TestCount()
         {
-            await _dbq.Clear(_queueName);
-            Assert.IsTrue(await _dbq.Count(_queueName) == 0, nameof(_dbq.Count));
+            var queueName = nameof(TestCount);
+            await _dbq.Clear(queueName);
+            Assert.IsTrue(await _dbq.Count(queueName) == 0, nameof(_dbq.Count));
 
             var texts = Enumerable.Range(1, 10).Select(i => Utils.GenerateText()).ToArray();
 
             foreach (var text in texts)
-                await _dbq.Push(_queueName, text);
+                await _dbq.Push(queueName, text);
 
-            Assert.IsTrue(await _dbq.Count(_queueName) == texts.Length, nameof(_dbq.Count));
+            Assert.IsTrue(await _dbq.Count(queueName) == texts.Length, nameof(_dbq.Count));
         }
 
     }
