@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 
-namespace TestEfc
+namespace Test.EFCore
 {
     internal class App
     {

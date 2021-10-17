@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,8 +27,9 @@ namespace DbQueue.EntityFrameworkCore
                 await _context.DbQueue.AddAsync(new()
                 {
                     Queue = queue,
-                    Data = data,
                     IsBlob = isBlob,
+                    Data = data,
+                    Hash = GetHash(data),
                 }, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -59,6 +61,21 @@ namespace DbQueue.EntityFrameworkCore
             });
         }
 
+        public async Task Unlock(string queue, long lockid, CancellationToken cancellationToken = default)
+        {
+            var entities = await _context.DbQueue
+                .Where(x => x.Queue == queue && x.LockId == lockid)
+                .ToListAsync(cancellationToken);
+
+            if (!entities.Any())
+                return;
+
+            foreach (var entity in entities)
+                entity.LockId = null;
+
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
         public Task<long> Count(string queue, CancellationToken cancellationToken = default)
         {
             return _context.DbQueue.Where(x => x.Queue == queue).LongCountAsync(cancellationToken);
@@ -77,7 +94,7 @@ namespace DbQueue.EntityFrameworkCore
 
             // completely
             return !entity.IsBlob
-                || !await _context.DbQueue.AnyAsync(x => x.Data == entity.Data, cancellationToken);
+                || !await _context.DbQueue.AnyAsync(x => x.Hash == entity.Hash, cancellationToken);
         }
 
         public async IAsyncEnumerable<byte[]> Clear(string queue, [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -86,39 +103,36 @@ namespace DbQueue.EntityFrameworkCore
 
             while (true)
             {
-                var entities = await _context.DbQueue.Take(batchSize).ToListAsync(cancellationToken);
+                var entities = await _context.DbQueue
+                    .Where(x=>x.Queue == queue)
+                    .Take(batchSize)
+                    .ToListAsync(cancellationToken);
 
                 _context.RemoveRange(entities);
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                foreach (var entity in entities)
-                    if (entity.IsBlob)
-                        yield return entity.Data;
+                var blobs = entities.Where(x => x.IsBlob).GroupBy(x => x.Hash).ToDictionary(g => g.Key, g => g.First().Data);
+
+                if (blobs.Any())
+                {
+                    var busy = new HashSet<long>(await _context.DbQueue.Where(x => x.IsBlob && blobs.Keys.Contains(x.Hash))
+                        .Select(x => x.Hash)
+                        .ToListAsync(cancellationToken));
+
+                    foreach (var kvp in blobs)
+                        if (!busy.Contains(kvp.Key))
+                            yield return kvp.Value;
+                }
 
                 if (entities.Count < batchSize)
                     break;
             }
         }
 
-        public async Task Unlock(string queue, long lockid, CancellationToken cancellationToken = default)
+        private IDbqDatabaseItem Map(EfcItem entity)
         {
-            var entities = await _context.DbQueue
-                .Where(x => x.Queue == queue && x.LockId == lockid)
-                .ToListAsync(cancellationToken);
-
-            if (!entities.Any())
-                return;
-
-            foreach (var entity in entities)
-                entity.LockId = null;
-
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-
-        private IDbqDatabaseItem Map(DbItem entity)
-        {
-            return new IDbqDatabaseItem()
+            return new()
             {
                 Key = entity.Id.ToString(),
                 Data = entity.Data,
@@ -127,7 +141,7 @@ namespace DbQueue.EntityFrameworkCore
             };
         }
 
-        private Expression<Func<DbItem, bool>> IsUnlocked(long? lockid)
+        private Expression<Func<EfcItem, bool>> IsUnlocked(long? lockid)
         {
             var autoUnlock = DateTime.Now.Add(-_settings.AutoUnlockDelay).Ticks;
             return x => x.LockId == null || x.LockId == lockid || x.LockId < autoUnlock;
@@ -146,6 +160,12 @@ namespace DbQueue.EntityFrameworkCore
                 }
 
             return default;
+        }
+
+        private static long GetHash(byte[] data)
+        {
+            using var sha = SHA256.Create();
+            return BitConverter.ToInt64(sha.ComputeHash(data));
         }
 
         internal static readonly byte[] BytesEmpty = new byte[0];

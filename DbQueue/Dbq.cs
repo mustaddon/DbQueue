@@ -1,6 +1,8 @@
 ﻿using DbQueue.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -23,6 +25,9 @@ namespace DbQueue
 
         public async Task Push(IEnumerable<string> queues, IAsyncEnumerator<byte[]> data, CancellationToken cancellationToken = default)
         {
+            if (!queues.Any())
+                throw new ArgumentException("Need to specify the target queue");
+
             using var ms = new MemoryStream();
             var isBlob = false;
 

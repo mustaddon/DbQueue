@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+	<LangVersion>latest</LangVersion>
+	<Nullable>enable</Nullable>
+	<SignAssembly>True</SignAssembly>
+	<AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
+	<AssemblyVersion>1.0.0</AssemblyVersion>
+	<FileVersion>1.0.0</FileVersion>
+    <Version>1.0.0-preview.2</Version>
+	<Company></Company>
+	<Authors>Leonid Salavatov</Authors>
+	<Copyright>Leonid Salavatov 2021</Copyright>
+	<PackageId>DbQueue.MongoDB</PackageId>
+	<Product>DbQueue.MongoDB</Product>
+	<Title>DbQueue.MongoDB</Title>
+    <Description>.NET DbQueue with MongoDB implementation of IDbqDatabase</Description>
+    <PackageTags>database queue dbqueue mongo mongodb dbq dotnet</PackageTags>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageProjectUrl>https://github.com/mustaddon/DbQueue</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/mustaddon/DbQueue</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<NeutralLanguage />
+	<PackageReleaseNotes></PackageReleaseNotes>
+  </PropertyGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.13.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DbQueue\DbQueue.csproj" />
+  </ItemGroup>
+
+</Project>

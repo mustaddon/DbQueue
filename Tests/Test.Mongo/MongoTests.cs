@@ -3,12 +3,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using Test.Common;
 
-namespace Test.EFCore
+namespace Test.Mongo
 {
     [TestClass()]
-    public class EfcTests
+    public class MongoTests
     {
-        public EfcTests()
+        public MongoTests()
         {
             _common = App.Instance.Value.Services.GetService<Tests>();
         }
