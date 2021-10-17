@@ -31,6 +31,12 @@ namespace TestEfc
         public Task TestPushManyQueues() => _common.TestPushManyQueues();
 
         [TestMethod]
+        public Task TestPop() => _common.TestPop();
+
+        [TestMethod]
+        public Task TestPeek() => _common.TestPeek();
+
+        [TestMethod]
         public Task TestPopMany() => _common.TestPopMany();
 
         [TestMethod]

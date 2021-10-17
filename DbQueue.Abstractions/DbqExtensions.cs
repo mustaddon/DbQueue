@@ -69,16 +69,16 @@ namespace DbQueue.Abstractions
             return Push(dbq, new[] { queue }, data, cancellationToken);
         }
 
-        public static Task<T?> Pop<T>(this IDbQueue dbq,
+        public static async Task<T?> Pop<T>(this IDbQueue dbq,
                string queue, CancellationToken cancellationToken = default)
         {
-            return Convert<T>(dbq.Pop(queue, cancellationToken).GetAsyncEnumerator());
+            return await Convert<T>(await dbq.Pop(queue, cancellationToken));
         }
 
-        public static Task<T?> Peek<T>(this IDbQueue dbq,
-               string queue, CancellationToken cancellationToken = default)
+        public static async Task<T?> Peek<T>(this IDbQueue dbq,
+               string queue, long index = 0, CancellationToken cancellationToken = default)
         {
-            return Convert<T>(dbq.Pop(queue, cancellationToken).GetAsyncEnumerator());
+            return await Convert<T>(await dbq.Peek(queue, index, cancellationToken));
         }
 
         public static async IAsyncEnumerable<IAsyncEnumerator<byte[]>> PopMany(this IDbQueue dbq,
@@ -86,15 +86,14 @@ namespace DbQueue.Abstractions
         {
             for (var i = 0L; count == null || i < count; i++)
             {
-                var enumerator = dbq.Pop(queue, cancellationToken).GetAsyncEnumerator();
+                var enumerator = await dbq.Pop(queue, cancellationToken);
 
-                if (!await enumerator.MoveNextAsync())
+                if (enumerator == null)
                     break;
 
-                yield return Concatenate(enumerator.Current, enumerator);
+                yield return enumerator;
             }
         }
-
 
         public static async IAsyncEnumerable<IAsyncEnumerator<byte[]>> PeekMany(this IDbQueue dbq,
                 string queue, long? count = null, long skip = 0, [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -102,12 +101,12 @@ namespace DbQueue.Abstractions
             count = skip + count;
             for (var i = skip; count == null || i < count; i++)
             {
-                var enumerator = dbq.Peek(queue, i, cancellationToken).GetAsyncEnumerator();
+                var enumerator = await dbq.Peek(queue, i, cancellationToken);
 
-                if (!await enumerator.MoveNextAsync())
+                if (enumerator == null)
                     break;
 
-                yield return Concatenate(enumerator.Current, enumerator);
+                yield return enumerator;
             }
         }
 
@@ -167,18 +166,15 @@ namespace DbQueue.Abstractions
             }
         }
 
-        private static async IAsyncEnumerator<byte[]> Concatenate(byte[] first, IAsyncEnumerator<byte[]> data)
-        {
-            yield return first;
-            while (await data.MoveNextAsync())
-                yield return data.Current;
-        }
-
-        private static async Task<T?> Convert<T>(IAsyncEnumerator<byte[]> data)
+        private static async Task<T?> Convert<T>(IAsyncEnumerator<byte[]>? data)
         {
             var result = default(T?);
 
+            if (data == null)
+                return result;
+
             using var ms = new MemoryStream();
+
             while (await data.MoveNextAsync())
             {
                 ms.Write(data.Current);

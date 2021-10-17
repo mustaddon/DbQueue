@@ -25,13 +25,10 @@ namespace Test.Common
             await _dbq.Clear(_queueName);
 
             var data = Utils.GenerateData();
+
             await _dbq.Push(_queueName, data);
 
-            var content = new List<byte[]>();
-            await foreach (var chunk in _dbq.Pop(_queueName))
-                content.Add(chunk);
-
-            var result = content.SelectMany(x => x).ToArray();
+            var result = await _dbq.Pop<byte[]>(_queueName);
 
             Assert.IsTrue(result.Length == data.Length, nameof(data.Length));
             Assert.IsFalse(result.Select((x, i) => data[i] == x).Any(x => !x), nameof(data));
@@ -45,9 +42,11 @@ namespace Test.Common
             using var stream = new MemoryStream(data);
             await _dbq.Push(_queueName, stream);
 
+            var enumerator = await _dbq.Pop(_queueName);
+
             var content = new List<byte[]>();
-            await foreach (var chunk in _dbq.Pop(_queueName))
-                content.Add(chunk);
+            while (await enumerator.MoveNextAsync())
+                content.Add(enumerator.Current);
 
             var result = content.SelectMany(x => x).ToArray();
 
@@ -98,6 +97,32 @@ namespace Test.Common
             }
         }
 
+        public async Task TestPop()
+        {
+            await _dbq.Clear(_queueName);
+
+            var text = Utils.GenerateText();
+            await _dbq.Push(_queueName, text);
+
+            var result = await _dbq.Pop<string>(_queueName);
+
+            Assert.IsTrue(text.Equals(result));
+            Assert.IsTrue(await _dbq.Count(_queueName) == 0, nameof(_dbq.Count));
+        }
+
+        public async Task TestPeek()
+        {
+            await _dbq.Clear(_queueName);
+
+            var text = Utils.GenerateText();
+            await _dbq.Push(_queueName, text);
+
+            var result = await _dbq.Peek<string>(_queueName);
+
+            Assert.IsTrue(text.Equals(result));
+            Assert.IsTrue(await _dbq.Count(_queueName) == 1, nameof(_dbq.Count));
+        }
+
         public async Task TestPopMany()
         {
             await _dbq.Clear(_queueName);
@@ -108,17 +133,10 @@ namespace Test.Common
                 await _dbq.Push(_queueName, data);
 
             var index = 0;
-            await foreach (var enumerator in _dbq.PopMany(_queueName))
+            await foreach (var result in _dbq.PopMany<byte[]>(_queueName))
             {
-                var content = new List<byte[]>();
-                while (await enumerator.MoveNextAsync())
-                    content.Add(enumerator.Current);
-
-                var result = content.SelectMany(x => x).ToArray();
-
                 Assert.IsTrue(result.Length == datas[index].Length, nameof(result.Length));
-                Assert.IsFalse(result.Select((x, i) => datas[index][i] == x).Any(x => !x), "data");
-
+                Assert.IsFalse(result.Select((x, i) => datas[index][i] == x).Any(x => !x), nameof(result));
                 index++;
             }
 
@@ -154,17 +172,10 @@ namespace Test.Common
                 await _dbq.Push(_queueName, data);
 
             var index = 0;
-            await foreach (var enumerator in _dbq.PeekMany(_queueName))
+            await foreach (var result in _dbq.PeekMany<byte[]>(_queueName))
             {
-                var content = new List<byte[]>();
-                while (await enumerator.MoveNextAsync())
-                    content.Add(enumerator.Current);
-
-                var result = content.SelectMany(x => x).ToArray();
-
                 Assert.IsTrue(result.Length == datas[index].Length, nameof(result.Length));
-                Assert.IsFalse(result.Select((x, i) => datas[index][i] == x).Any(x => !x), "data");
-
+                Assert.IsFalse(result.Select((x, i) => datas[index][i] == x).Any(x => !x), nameof(result));
                 index++;
             }
 

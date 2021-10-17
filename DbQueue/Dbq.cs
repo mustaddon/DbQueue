@@ -48,7 +48,7 @@ namespace DbQueue
             }
             catch
             {
-                if (isBlob) 
+                if (isBlob)
                     await _blobStorage.Delete(GetBlobId(dbData));
 
                 throw;
@@ -66,7 +66,13 @@ namespace DbQueue
                 await _blobStorage.Delete(GetBlobId(blobKey));
         }
 
-        public async IAsyncEnumerable<byte[]> Pop(string queue, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async Task<IAsyncEnumerator<byte[]>?> Pop(string queue, CancellationToken cancellationToken = default)
+        {
+            var enumerator = PopEnumerator(queue, cancellationToken);
+            return !await enumerator.MoveNextAsync() ? null : Concatenate(enumerator.Current, enumerator);
+        }
+
+        private async IAsyncEnumerator<byte[]> PopEnumerator(string queue, CancellationToken cancellationToken = default)
         {
             var item = await _database.Get(queue, _settings.StackMode,
                 withLock: !_settings.DisableLocking,
@@ -92,7 +98,13 @@ namespace DbQueue
                 }
         }
 
-        public async IAsyncEnumerable<byte[]> Peek(string queue, long index = 0, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async Task<IAsyncEnumerator<byte[]>?> Peek(string queue, long index = 0, CancellationToken cancellationToken = default)
+        {
+            var enumerator = PeekEnumerator(queue, index, cancellationToken);
+            return !await enumerator.MoveNextAsync() ? null : Concatenate(enumerator.Current, enumerator);
+        }
+
+        private async IAsyncEnumerator<byte[]> PeekEnumerator(string queue, long index = 0, CancellationToken cancellationToken = default)
         {
             var item = await _database.Get(queue, _settings.StackMode,
                 index: index,
