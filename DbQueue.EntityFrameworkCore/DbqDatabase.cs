@@ -135,6 +135,7 @@ namespace DbQueue.EntityFrameworkCore
             return new()
             {
                 Key = entity.Id.ToString(),
+                Queue = entity.Queue,
                 Data = entity.Data,
                 IsBlob = entity.IsBlob,
                 LockId = entity.LockId,

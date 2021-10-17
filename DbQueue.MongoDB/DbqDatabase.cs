@@ -69,6 +69,7 @@ namespace DbQueue.MongoDB
                 return new IDbqDatabaseItem()
                 {
                     Key = entity.Id,
+                    Queue = entity.Queue,
                     Data = entity.Data,
                     IsBlob = entity.IsBlob,
                     LockId = lockid,

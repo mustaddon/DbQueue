@@ -50,5 +50,8 @@ namespace Test.EFCore
 
         [TestMethod]
         public Task TestCount() => _common.TestCount();
+
+        [TestMethod]
+        public Task TestBreak() => _common.TestBreak();
     }
 }

@@ -241,5 +241,23 @@ namespace Test.Common
             Assert.IsTrue(await _dbq.Count(queueName) == texts.Length, nameof(_dbq.Count));
         }
 
+        public async Task TestBreak()
+        {
+            var queueName = nameof(TestBreak);
+            await _dbq.Clear(queueName);
+
+            var text = Utils.GenerateText();
+
+            await _dbq.Push(queueName, text);
+
+            var enumerator = await _dbq.Pop(queueName);
+            //await enumerator.MoveNextAsync();
+            await enumerator.DisposeAsync();
+
+            var result = await _dbq.Pop<string>(queueName);
+
+            Assert.IsTrue(text.Equals(result), nameof(_dbq.Count));
+        }
+
     }
 }

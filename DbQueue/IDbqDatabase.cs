@@ -17,6 +17,7 @@ namespace DbQueue
     public class IDbqDatabaseItem
     {
         public string Key { get; set; } = string.Empty;
+        public string Queue { get; set; } = string.Empty;
         public byte[] Data { get; set; } = Dbq.BytesEmpty;
         public bool IsBlob { get; set; }
         public long? LockId { get; set; }

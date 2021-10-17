@@ -71,54 +71,53 @@ namespace DbQueue
                 await _blobStorage.Delete(GetBlobId(blobKey));
         }
 
-        public async Task<IAsyncEnumerator<byte[]>?> Pop(string queue, CancellationToken cancellationToken = default)
-        {
-            var enumerator = PopEnumerator(queue, cancellationToken);
-            return !await enumerator.MoveNextAsync() ? null : Concatenate(enumerator.Current, enumerator);
-        }
-
-        private async IAsyncEnumerator<byte[]> PopEnumerator(string queue, CancellationToken cancellationToken = default)
-        {
-            var item = await _database.Get(queue, _settings.StackMode,
-                withLock: !_settings.DisableLocking,
-                cancellationToken: cancellationToken);
-
-            var complete = false;
-
-            if (item != null)
-                try
-                {
-                    await foreach (var chunk in GetData(item, cancellationToken))
-                        yield return chunk;
-
-                    if (await _database.Remove(item.Key, cancellationToken) && item.IsBlob)
-                        await _blobStorage.Delete(GetBlobId(item.Data));
-
-                    complete = true;
-                }
-                finally
-                {
-                    if (!complete && item.LockId.HasValue)
-                        await _database.Unlock(queue, item.LockId.Value);
-                }
-        }
-
         public async Task<IAsyncEnumerator<byte[]>?> Peek(string queue, long index = 0, CancellationToken cancellationToken = default)
-        {
-            var enumerator = PeekEnumerator(queue, index, cancellationToken);
-            return !await enumerator.MoveNextAsync() ? null : Concatenate(enumerator.Current, enumerator);
-        }
-
-        private async IAsyncEnumerator<byte[]> PeekEnumerator(string queue, long index = 0, CancellationToken cancellationToken = default)
         {
             var item = await _database.Get(queue, _settings.StackMode,
                 index: index,
                 cancellationToken: cancellationToken);
 
-            if (item != null)
+            return item == null ? null : GetData(item, cancellationToken).GetAsyncEnumerator();
+        }
+
+        public async Task<IAsyncEnumerator<byte[]>?> Pop(string queue, CancellationToken cancellationToken = default)
+        {
+            var item = await _database.Get(queue, _settings.StackMode,
+                withLock: !_settings.DisableLocking,
+                cancellationToken: cancellationToken);
+
+            if (item == null)
+                return null;
+
+            var result = PopEnumerator(item, cancellationToken);
+            await result.MoveNextAsync();
+
+            return result;
+        }
+
+        private async IAsyncEnumerator<byte[]> PopEnumerator(IDbqDatabaseItem item, CancellationToken cancellationToken = default)
+        {
+            var complete = false;
+
+            try
+            {
+                yield return BytesEmpty;
+
                 await foreach (var chunk in GetData(item, cancellationToken))
                     yield return chunk;
+
+                if (await _database.Remove(item.Key, cancellationToken) && item.IsBlob)
+                    await _blobStorage.Delete(GetBlobId(item.Data));
+
+                complete = true;
+            }
+            finally
+            {
+                if (!complete && item.LockId.HasValue)
+                    await _database.Unlock(item.Queue, item.LockId.Value);
+            }
         }
+
 
         private async IAsyncEnumerable<byte[]> GetData(IDbqDatabaseItem item, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
@@ -144,11 +143,24 @@ namespace DbQueue
         internal static readonly byte[] BytesEmpty = new byte[0];
         private static byte[] GetBytes(string blobId) => Encoding.UTF8.GetBytes(blobId);
         private static string GetBlobId(byte[] bytes) => Encoding.UTF8.GetString(bytes);
-        private static async IAsyncEnumerator<byte[]> Concatenate(byte[] first, IAsyncEnumerator<byte[]> data)
+        private static async IAsyncEnumerator<byte[]> Concatenate(byte[] first, IAsyncEnumerator<byte[]> enumerator)
         {
-            yield return first;
-            while (await data.MoveNextAsync())
-                yield return data.Current;
+            var complete = false;
+
+            try
+            {
+                yield return first;
+
+                while (await enumerator.MoveNextAsync())
+                    yield return enumerator.Current;
+
+                complete = true;
+            }
+            finally
+            {
+                if (!complete)
+                    await enumerator.DisposeAsync();
+            }
         }
     }
 }
