@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+	<LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
+	<AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <Version>1.0.0-preview</Version>
+	<Company></Company>
+    <Authors>Leonid Salavatov</Authors>
+    <Copyright>Leonid Salavatov 2021</Copyright>
+    <PackageId>DbQueue.EntityFrameworkCore</PackageId>
+    <Product>DbQueue.EntityFrameworkCore</Product>
+    <Title>DbQueue.EntityFrameworkCore</Title>
+    <Description>.NET DbQueue with EntityFrameworkCore implementation of IDbqDatabase</Description>
+    <PackageTags>database queue dbqueue entityframework efcore dbq dotnet</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/mustaddon/DbQueue</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mustaddon/DbQueue</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <NeutralLanguage />
+    <PackageReleaseNotes></PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DbQueue\DbQueue.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+	<LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
+	<AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <Version>1.0.0-preview</Version>
+	<Company></Company>
+    <Authors>Leonid Salavatov</Authors>
+    <Copyright>Leonid Salavatov 2021</Copyright>
+    <PackageId>DbQueue</PackageId>
+    <Product>DbQueue</Product>
+    <Title>DbQueue</Title>
+    <Description>.NET Database Queue</Description>
+    <PackageTags>database queue dbqueue dbq dotnet</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/mustaddon/DbQueue</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mustaddon/DbQueue</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <NeutralLanguage />
+    <PackageReleaseNotes></PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DbQueue.Abstractions\DbQueue.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
