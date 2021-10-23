@@ -48,7 +48,7 @@ namespace DbQueue
         }
 
 
-        public Task Delete(string path, CancellationToken cancellationToken = default)
+        public Task Remove(string path, CancellationToken cancellationToken = default)
         {
             if (File.Exists(path))
                 File.Delete(path);

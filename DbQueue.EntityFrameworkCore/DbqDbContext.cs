@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace DbQueue.EntityFrameworkCore
 {
@@ -36,7 +37,11 @@ namespace DbQueue.EntityFrameworkCore
         public byte[] Data { get; set; } = DbqDatabase.BytesEmpty;
         public bool IsBlob { get; set; }
         public long Hash { get; set; }
+        public int Type { get; set; }
+        public DateTime? AvailableAfter { get; set; }
+        public DateTime? RemoveAfter { get; set; }
         public long? LockId { get; set; }
+
 
         public override int GetHashCode() => Id.GetHashCode();
         public override bool Equals(object obj) => Id == (obj as EfcItem)?.Id;

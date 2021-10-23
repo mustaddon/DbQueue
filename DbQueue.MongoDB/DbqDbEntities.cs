@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 namespace DbQueue.MongoDB
 {
@@ -12,6 +13,9 @@ namespace DbQueue.MongoDB
         public byte[] Data { get; set; } = DbqDatabase.BytesEmpty;
         public long Hash { get; set; }
         public bool IsBlob { get; set; }
+        public int Type { get; set; }
+        public long? AvailableAfter { get; set; }
+        public long? RemoveAfter { get; set; }
         public long? LockId { get; set; }
 
         public override int GetHashCode() => Id.GetHashCode();

@@ -21,7 +21,7 @@ namespace DbQueue.EntityFrameworkCore
         readonly DbqDbContext _context;
         readonly DbqDbSettings _settings;
 
-        public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, CancellationToken cancellationToken = default)
+        public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             foreach (var queue in queues)
                 await _context.DbQueue.AddAsync(new()
@@ -30,6 +30,9 @@ namespace DbQueue.EntityFrameworkCore
                     IsBlob = isBlob,
                     Data = data,
                     Hash = GetHash(data),
+                    Type = type,
+                    AvailableAfter = availableAfter,
+                    RemoveAfter = removeAfter,
                 }, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -42,7 +45,7 @@ namespace DbQueue.EntityFrameworkCore
                 var lockid = withLock ? DateTime.Now.Ticks : (long?)null;
 
                 var entity = await _context.DbQueue
-                    .Where(x => x.Queue == queue)
+                    .Where(x => x.Queue == queue && (x.AvailableAfter == null || x.AvailableAfter < DateTime.Now))
                     .Where(IsUnlocked(lockid))
                     .OrderBy(x => x.Id, desc)
                     .Skip((int)index)
@@ -78,7 +81,9 @@ namespace DbQueue.EntityFrameworkCore
 
         public Task<long> Count(string queue, CancellationToken cancellationToken = default)
         {
-            return _context.DbQueue.Where(x => x.Queue == queue).LongCountAsync(cancellationToken);
+            return _context.DbQueue
+                .Where(x => x.Queue == queue && (x.RemoveAfter == null || x.RemoveAfter > DateTime.Now))
+                .LongCountAsync(cancellationToken);
         }
 
         public async Task<bool> Remove(string key, CancellationToken cancellationToken = default)
@@ -97,14 +102,15 @@ namespace DbQueue.EntityFrameworkCore
                 || !await _context.DbQueue.AnyAsync(x => x.Hash == entity.Hash, cancellationToken);
         }
 
-        public async IAsyncEnumerable<byte[]> Clear(string queue, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<byte[]> Clear(string queue, IEnumerable<int>? types = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var batchSize = 1000;
+            types = types?.Any() == true ? types.ToArray() : null;
 
             while (true)
             {
                 var entities = await _context.DbQueue
-                    .Where(x=>x.Queue == queue)
+                    .Where(x => x.Queue == queue && (types == null || types.Contains(x.Type)))
                     .Take(batchSize)
                     .ToListAsync(cancellationToken);
 
@@ -139,6 +145,7 @@ namespace DbQueue.EntityFrameworkCore
                 Data = entity.Data,
                 IsBlob = entity.IsBlob,
                 LockId = entity.LockId,
+                RemoveAfter = entity.RemoveAfter,
             };
         }
 

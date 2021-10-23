@@ -10,38 +10,38 @@ namespace DbQueue
     public static partial class DbqExtensions
     {
         public static async Task Push(this IDbQueue dbq,
-               IEnumerable<string> queues, Stream data, CancellationToken cancellationToken = default)
+               IEnumerable<string> queues, Stream data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             await using var enumerator = data.GetAsyncEnumerator(cancellationToken);
-            await dbq.Push(queues, enumerator, cancellationToken);
+            await dbq.Push(queues, enumerator, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static async Task Push(this IDbQueue dbq,
-               IEnumerable<string> queues, byte[] data, CancellationToken cancellationToken = default)
+               IEnumerable<string> queues, byte[] data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             await using var enumerator = data.GetChunkEnumerator();
-            await dbq.Push(queues, enumerator, cancellationToken);
+            await dbq.Push(queues, enumerator, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static async Task Push(this IDbQueue dbq,
-               IEnumerable<string> queues, IAsyncEnumerable<byte[]> data, CancellationToken cancellationToken = default)
+               IEnumerable<string> queues, IAsyncEnumerable<byte[]> data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             await using var enumerator = data.GetAsyncEnumerator(cancellationToken);
-            await dbq.Push(queues, enumerator, cancellationToken);
+            await dbq.Push(queues, enumerator, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static async Task Push(this IDbQueue dbq,
-               IEnumerable<string> queues, object? data, CancellationToken cancellationToken = default)
+               IEnumerable<string> queues, object? data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             if (data == null || data is byte[])
             {
-                await Push(dbq, queues, (data as byte[]) ?? BytesEmpty, cancellationToken);
+                await Push(dbq, queues, (data as byte[]) ?? BytesEmpty, type, availableAfter, removeAfter, cancellationToken);
                 return;
             }
 
             if (data is Stream)
             {
-                await Push(dbq, queues, data as Stream ?? new MemoryStream(), cancellationToken);
+                await Push(dbq, queues, data as Stream ?? new MemoryStream(), type, availableAfter, removeAfter, cancellationToken);
                 return;
             }
 
@@ -57,37 +57,37 @@ namespace DbQueue
 
             ms.Position = 0;
 
-            await Push(dbq, queues, ms as Stream, cancellationToken);
+            await Push(dbq, queues, ms as Stream, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static Task Push(this IDbQueue dbq,
-               string queue, IAsyncEnumerator<byte[]> data, CancellationToken cancellationToken = default)
+               string queue, IAsyncEnumerator<byte[]> data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
-            return dbq.Push(new[] { queue }, data, cancellationToken);
+            return dbq.Push(new[] { queue }, data, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static Task Push(this IDbQueue dbq,
-               string queue, Stream data, CancellationToken cancellationToken = default)
+               string queue, Stream data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
-            return Push(dbq, new[] { queue }, data, cancellationToken);
+            return Push(dbq, new[] { queue }, data, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static Task Push(this IDbQueue dbq,
-               string queue, byte[] data, CancellationToken cancellationToken = default)
+               string queue, byte[] data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
-            return Push(dbq, new[] { queue }, data, cancellationToken);
+            return Push(dbq, new[] { queue }, data, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static Task Push(this IDbQueue dbq,
-               string queue, IAsyncEnumerable<byte[]> data, CancellationToken cancellationToken = default)
+               string queue, IAsyncEnumerable<byte[]> data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
-            return Push(dbq, new[] { queue }, data, cancellationToken);
+            return Push(dbq, new[] { queue }, data, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static Task Push(this IDbQueue dbq,
-               string queue, object? data, CancellationToken cancellationToken = default)
+               string queue, object? data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
-            return Push(dbq, new[] { queue }, data, cancellationToken);
+            return Push(dbq, new[] { queue }, data, type, availableAfter, removeAfter, cancellationToken);
         }
 
         private static async IAsyncEnumerator<byte[]> GetAsyncEnumerator(this Stream stream, CancellationToken cancellationToken = default)

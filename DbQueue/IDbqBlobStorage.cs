@@ -8,6 +8,6 @@ namespace DbQueue
     {
         Task<string> Add(IAsyncEnumerator<byte[]> data, CancellationToken cancellationToken = default);
         IAsyncEnumerable<byte[]> Get(string key, CancellationToken cancellationToken = default);
-        Task Delete(string key, CancellationToken cancellationToken = default);
+        Task Remove(string key, CancellationToken cancellationToken = default);
     }
 }

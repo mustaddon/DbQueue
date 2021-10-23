@@ -25,7 +25,7 @@ namespace DbQueue
 
         public bool StackMode { get; set; }
 
-        public async Task Push(IEnumerable<string> queues, IAsyncEnumerator<byte[]> data, CancellationToken cancellationToken = default)
+        public async Task Push(IEnumerable<string> queues, IAsyncEnumerator<byte[]> data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             queues = queues.Select(NormQueueName).Distinct().ToList();
 
@@ -53,12 +53,12 @@ namespace DbQueue
 
             try
             {
-                await _database.Add(queues, dbData, isBlob, cancellationToken);
+                await _database.Add(queues, dbData, isBlob, type, availableAfter, removeAfter, cancellationToken);
             }
             catch
             {
                 if (isBlob)
-                    await _blobStorage.Delete(GetBlobId(dbData));
+                    await _blobStorage.Remove(GetBlobId(dbData));
 
                 throw;
             }
@@ -69,26 +69,22 @@ namespace DbQueue
             return _database.Count(NormQueueName(queue), cancellationToken);
         }
 
-        public async Task Clear(string queue, CancellationToken cancellationToken = default)
+        public async Task Clear(string queue, IEnumerable<int>? types = null, CancellationToken cancellationToken = default)
         {
-            await foreach (var blobKey in _database.Clear(NormQueueName(queue), cancellationToken))
-                await _blobStorage.Delete(GetBlobId(blobKey));
+            await foreach (var blobKey in _database.Clear(NormQueueName(queue), types, cancellationToken))
+                await _blobStorage.Remove(GetBlobId(blobKey));
         }
 
         public async Task<IAsyncEnumerator<byte[]>?> Peek(string queue, long index = 0, CancellationToken cancellationToken = default)
         {
-            var item = await _database.Get(NormQueueName(queue), StackMode,
-                index: index,
-                cancellationToken: cancellationToken);
+            var item = await Get(NormQueueName(queue), index, false, cancellationToken);
 
             return item == null ? null : GetData(item, cancellationToken).GetAsyncEnumerator();
         }
 
         public async Task<IDbqAcknowledgement<IAsyncEnumerator<byte[]>>?> Pop(string queue, CancellationToken cancellationToken = default)
         {
-            var item = await _database.Get(NormQueueName(queue), StackMode,
-                withLock: !_settings.DisableLocking,
-                cancellationToken: cancellationToken);
+            var item = await Get(NormQueueName(queue), 0, !_settings.DisableLocking, cancellationToken);
 
             if (item == null)
                 return null;
@@ -99,9 +95,7 @@ namespace DbQueue
             return new DbqAck<IAsyncEnumerator<byte[]>>(result,
                 commit: async () =>
                 {
-                    if (await _database.Remove(item.Id, cancellationToken) && item.IsBlob)
-                        await _blobStorage.Delete(GetBlobId(item.Data));
-
+                    await Remove(item, cancellationToken);
                     commited = true;
                 },
                 dispose: async () =>
@@ -113,8 +107,26 @@ namespace DbQueue
                 });
         }
 
+        private async Task<DbqDatabaseItem?> Get(string queue, long index, bool withLock, CancellationToken cancellationToken)
+        {
+            var item = await _database.Get(queue, StackMode, index, withLock, cancellationToken);
 
-        private async IAsyncEnumerable<byte[]> GetData(DbqDatabaseItem item, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+            while (item != null && item.RemoveAfter < DateTime.Now)
+            {
+                await Remove(item, cancellationToken);
+                item = await _database.Get(queue, StackMode, index, withLock, cancellationToken);
+            }
+
+            return item;
+        }
+
+        private async Task Remove(DbqDatabaseItem item, CancellationToken cancellationToken)
+        {
+            if (await _database.Remove(item.Id, cancellationToken) && item.IsBlob)
+                await _blobStorage.Remove(GetBlobId(item.Data));
+        }
+
+        private async IAsyncEnumerable<byte[]> GetData(DbqDatabaseItem item, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             if (!item.IsBlob)
                 yield return item.Data;

@@ -27,7 +27,7 @@ namespace DbQueue.MongoDB
         readonly Lazy<IMongoCollection<MongoItem>> _dbItems;
 
 
-        public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, CancellationToken cancellationToken = default)
+        public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             await _dbItems.Value.InsertManyAsync(queues.Select(queue => new MongoItem
             {
@@ -35,6 +35,9 @@ namespace DbQueue.MongoDB
                 IsBlob = isBlob,
                 Data = data,
                 Hash = GetHash(data),
+                Type = type,
+                AvailableAfter = availableAfter?.Ticks,
+                RemoveAfter = removeAfter?.Ticks,
             }), null, cancellationToken);
         }
 
@@ -46,7 +49,7 @@ namespace DbQueue.MongoDB
                 var autoUnlock = DateTime.Now.Add(-_settings.AutoUnlockDelay).Ticks;
 
                 var entity = await _dbItems.Value
-                    .Find(x => x.Queue == queue
+                    .Find(x => x.Queue == queue && (x.AvailableAfter == null || x.AvailableAfter < DateTime.Now.Ticks)
                         && (x.LockId == null || x.LockId == lockid || x.LockId < autoUnlock))
                     .Sort(desc ? Builders<MongoItem>.Sort.Descending(x => x.Id) : Builders<MongoItem>.Sort.Ascending(x => x.Id))
                     .Skip((int)index)
@@ -72,6 +75,7 @@ namespace DbQueue.MongoDB
                     Queue = entity.Queue,
                     Data = entity.Data,
                     IsBlob = entity.IsBlob,
+                    RemoveAfter = entity.RemoveAfter.HasValue ? new DateTime(entity.RemoveAfter.Value) : null,
                     LockId = lockid,
                 };
             });
@@ -87,7 +91,9 @@ namespace DbQueue.MongoDB
 
         public Task<long> Count(string queue, CancellationToken cancellationToken = default)
         {
-            return _dbItems.Value.CountDocumentsAsync(x => x.Queue == queue, null, cancellationToken);
+            return _dbItems.Value
+                .CountDocumentsAsync(x => x.Queue == queue && (x.RemoveAfter == null || x.RemoveAfter > DateTime.Now.Ticks),
+                null, cancellationToken);
         }
 
 
@@ -101,14 +107,15 @@ namespace DbQueue.MongoDB
                 || 0 == await _dbItems.Value.CountDocumentsAsync(x => x.Hash == entity.Hash, null, cancellationToken);
         }
 
-        public async IAsyncEnumerable<byte[]> Clear(string queue, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<byte[]> Clear(string queue, IEnumerable<int>? types = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var batchSize = 1000;
+            var typesArray = types?.Any() == true ? types.ToArray() : new int[0];
 
             while (true)
             {
                 var entities = await _dbItems.Value
-                    .Find(x => x.Queue == queue)
+                    .Find(x => x.Queue == queue && (typesArray.Length == 0 || typesArray.Contains(x.Type)))
                     .Limit(batchSize)
                     .ToListAsync(cancellationToken);
 
