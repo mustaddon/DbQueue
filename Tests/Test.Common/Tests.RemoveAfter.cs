@@ -16,7 +16,7 @@ namespace Test.Common
             await _dbq.Clear(queueName);
 
             var text = Utils.GenerateText();
-            var delay = 1000;
+            var delay = 2000;
 
             var items = new[] {
                 Tuple.Create(string.Empty, -delay),
@@ -49,7 +49,7 @@ namespace Test.Common
             await _dbq.Clear(queueName);
 
             var text = Utils.GenerateText();
-            var delay = 1000;
+            var delay = 2000;
 
             var items = new[] { 
                 Tuple.Create(string.Empty, -delay), 

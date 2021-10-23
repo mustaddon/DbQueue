@@ -1,5 +1,6 @@
 ﻿using DbQueue;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -101,6 +102,31 @@ namespace Test.Common
                     await ack.Commit();
                     Assert.AreEqual(text, ack.Data);
                 }
+        }
+
+        [TestMethod]
+        public async Task TestPushExtensions()
+        {
+            var queueName = GetQueueName(nameof(TestPushExtensions));
+
+            await _dbq.Clear(queueName);
+
+            var items = new[] {
+                DateTime.Today.AddDays(-1),
+                DateTime.Today,
+            };
+
+            for(var i=0; i<items.Length;i++)
+            {
+                var item = items[i];
+                await _dbq.Push(queueName, Utils.GenerateText(), i, item, item.AddDays(1));
+                await _dbq.Push(queueName, Utils.GenerateData(), i, item, item.AddDays(1));
+                await _dbq.Push(queueName, new MemoryStream(Utils.GenerateData()), i, item, item.AddDays(1));
+                await _dbq.Push(queueName, Utils.GenerateObject(), i, item, item.AddDays(1));
+            }
+
+            Assert.AreEqual(4, await _dbq.Count(queueName));
+            await _dbq.Clear(queueName);
         }
 
     }

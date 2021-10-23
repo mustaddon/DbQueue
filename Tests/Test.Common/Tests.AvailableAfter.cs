@@ -15,7 +15,7 @@ namespace Test.Common
             await _dbq.Clear(queueName);
 
             var text = Utils.GenerateText();
-            var delay = 1000;
+            var delay = 2000;
 
             await _dbq.Push(queueName, text,
                 availableAfter: DateTime.Now.AddMilliseconds(delay));
@@ -41,7 +41,7 @@ namespace Test.Common
             await _dbq.Clear(queueName);
 
             var text = Utils.GenerateText();
-            var delay = 1000;
+            var delay = 2000;
 
             await _dbq.Push(queueName, text,
                 availableAfter: DateTime.Now.AddMilliseconds(delay));
