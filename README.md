@@ -15,15 +15,15 @@ CREATE DATABASE [DbqDatabase]
 GO
 CREATE TABLE [DbqDatabase].[dbo].[DbQueue]
 (
-	[Id] BIGINT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
-	[Queue] NVARCHAR(256) NOT NULL,
-	[Data] VARBINARY (MAX) NOT NULL,
-	[Hash] BIGINT NOT NULL,
-	[IsBlob] BIT NOT NULL DEFAULT 0,
-	[LockId] BIGINT NULL,
-	INDEX [IX_DbQueue_Queue] NONCLUSTERED ([Queue]),
-	INDEX [IX_DbQueue_Hash] NONCLUSTERED ([Hash]),
-	INDEX [IX_DbQueue_LockId] NONCLUSTERED ([LockId]),
+    [Id] BIGINT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
+    [Queue] NVARCHAR(256) NOT NULL,
+    [Data] VARBINARY (MAX) NOT NULL,
+    [Hash] BIGINT NOT NULL,
+    [IsBlob] BIT NOT NULL DEFAULT 0,
+    [LockId] BIGINT NULL,
+    INDEX [IX_DbQueue_Queue] NONCLUSTERED ([Queue]),
+    INDEX [IX_DbQueue_Hash] NONCLUSTERED ([Hash]),
+    INDEX [IX_DbQueue_LockId] NONCLUSTERED ([LockId]),
 )
 ```
 
