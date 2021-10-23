@@ -11,11 +11,7 @@ namespace Test.Mongo
             var builder = Host.CreateDefaultBuilder()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddDbqMongo((s, o) => {
-                        //o.Queue.StackMode = true;
-                    });
-
-                    services.AddScoped<Test.Common.Tests>();
+                    services.AddDbqMongo();
                 });
 
             return builder.Build();

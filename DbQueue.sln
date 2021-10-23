@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbQueue", "DbQueue\DbQueue.csproj", "{95AE2A22-74B3-4E3E-AD29-900149D254B4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbQueue.Abstractions", "DbQueue.Abstractions\DbQueue.Abstractions.csproj", "{D85F172A-54F6-42AC-AD47-66D3B2E737E7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbQueue.EntityFrameworkCore", "DbQueue.EntityFrameworkCore\DbQueue.EntityFrameworkCore.csproj", "{9ECE65ED-211E-4CE2-B4A4-B25F777C0921}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{78984455-CBFA-4350-B50D-7A79B15DCB32}"
@@ -27,6 +25,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.ConsoleApp.MongoDB"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Mongo", "Tests\Test.Mongo\Test.Mongo.csproj", "{F9386D1B-D60F-488A-B3BC-C47FC6523F05}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6828527F-391F-4F76-8143-73E4258F6F2C}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,10 +42,6 @@ Global
 		{95AE2A22-74B3-4E3E-AD29-900149D254B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95AE2A22-74B3-4E3E-AD29-900149D254B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95AE2A22-74B3-4E3E-AD29-900149D254B4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D85F172A-54F6-42AC-AD47-66D3B2E737E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D85F172A-54F6-42AC-AD47-66D3B2E737E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D85F172A-54F6-42AC-AD47-66D3B2E737E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D85F172A-54F6-42AC-AD47-66D3B2E737E7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9ECE65ED-211E-4CE2-B4A4-B25F777C0921}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9ECE65ED-211E-4CE2-B4A4-B25F777C0921}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ECE65ED-211E-4CE2-B4A4-B25F777C0921}.Release|Any CPU.ActiveCfg = Release|Any CPU

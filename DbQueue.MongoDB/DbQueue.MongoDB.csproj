@@ -8,15 +8,15 @@
 	<AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
 	<AssemblyVersion>1.0.0</AssemblyVersion>
 	<FileVersion>1.0.0</FileVersion>
-    <Version>1.0.0-preview.2</Version>
+    <Version>1.0.0</Version>
 	<Company></Company>
 	<Authors>Leonid Salavatov</Authors>
 	<Copyright>Leonid Salavatov 2021</Copyright>
 	<PackageId>DbQueue.MongoDB</PackageId>
 	<Product>DbQueue.MongoDB</Product>
 	<Title>DbQueue.MongoDB</Title>
-    <Description>.NET DbQueue with MongoDB implementation of IDbqDatabase</Description>
-    <PackageTags>database queue dbqueue mongo mongodb dbq dotnet</PackageTags>
+    <Description>.NET DbQueue with MongoDB</Description>
+    <PackageTags>database queue dbqueue stack dbstack mongo mongodb dbq dotnet</PackageTags>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageProjectUrl>https://github.com/mustaddon/DbQueue</PackageProjectUrl>
 	<RepositoryUrl>https://github.com/mustaddon/DbQueue</RepositoryUrl>

@@ -35,7 +35,7 @@ namespace DbQueue.EntityFrameworkCore
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task<IDbqDatabaseItem?> Get(string queue, bool desc = false, long index = 0, bool withLock = false, CancellationToken cancellationToken = default)
+        public Task<DbqDatabaseItem?> Get(string queue, bool desc = false, long index = 0, bool withLock = false, CancellationToken cancellationToken = default)
         {
             return WithRetry(_settings.LockRetries, async (i) =>
             {
@@ -130,11 +130,11 @@ namespace DbQueue.EntityFrameworkCore
             }
         }
 
-        private IDbqDatabaseItem Map(EfcItem entity)
+        private DbqDatabaseItem Map(EfcItem entity)
         {
             return new()
             {
-                Key = entity.Id.ToString(),
+                Id = entity.Id.ToString(),
                 Queue = entity.Queue,
                 Data = entity.Data,
                 IsBlob = entity.IsBlob,
@@ -171,4 +171,6 @@ namespace DbQueue.EntityFrameworkCore
 
         internal static readonly byte[] BytesEmpty = new byte[0];
     }
+
+
 }

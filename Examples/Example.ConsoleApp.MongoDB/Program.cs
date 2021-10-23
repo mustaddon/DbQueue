@@ -1,4 +1,4 @@
-﻿using DbQueue.Abstractions;
+﻿using DbQueue;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,15 +25,15 @@ var queue = app.Services.GetRequiredService<IDbQueue>();
 var queueName = "examples";
 
 // push
-await queue.Push(queueName, "some string, byte array, stream and etc");
+await queue.Push(queueName, "Some byte[], stream, string and etc...");
 
 // peek
 var peeked = await queue.Peek<string>(queueName);
 Console.WriteLine($"peek: {peeked}");
 
 // pop
-var poped = await queue.Pop<string>(queueName);
-Console.WriteLine($"pop: {poped}");
+var popped = await queue.Pop<string>(queueName).WithAutoAck();
+Console.WriteLine($"pop: {popped}");
 
 // count
 var count = await queue.Count(queueName);

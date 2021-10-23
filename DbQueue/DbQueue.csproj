@@ -8,15 +8,15 @@
     <AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
 	<AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion>1.0.0</FileVersion>
-    <Version>1.0.0-preview.2</Version>
+    <Version>1.0.0</Version>
 	<Company></Company>
     <Authors>Leonid Salavatov</Authors>
     <Copyright>Leonid Salavatov 2021</Copyright>
     <PackageId>DbQueue</PackageId>
     <Product>DbQueue</Product>
     <Title>DbQueue</Title>
-    <Description>.NET Database Queue</Description>
-    <PackageTags>database queue dbqueue dbq dotnet</PackageTags>
+    <Description>.NET Database Queue/Stack</Description>
+    <PackageTags>database queue dbqueue stack dbstack dbq dotnet</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/mustaddon/DbQueue</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mustaddon/DbQueue</RepositoryUrl>
@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DbQueue.Abstractions\DbQueue.Abstractions.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
 </Project>

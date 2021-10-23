@@ -15,11 +15,8 @@ namespace Test.EFCore
                 {
                     services.AddDbqEfc((sp, options) =>
                     {
-                        //options.Queue.StackMode = true;
                         options.Database.ContextConfigurator = (db) => db.UseSqlServer(hostContext.Configuration.GetConnectionString("dbq"));
                     });
-
-                    services.AddScoped<Test.Common.Tests>();
                 });
 
             return builder.Build();

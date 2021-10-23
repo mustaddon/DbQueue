@@ -38,9 +38,9 @@ namespace DbQueue.MongoDB
             }), null, cancellationToken);
         }
 
-        public Task<IDbqDatabaseItem?> Get(string queue, bool desc = false, long index = 0, bool withLock = false, CancellationToken cancellationToken = default)
+        public Task<DbqDatabaseItem?> Get(string queue, bool desc = false, long index = 0, bool withLock = false, CancellationToken cancellationToken = default)
         {
-            return WithRetry(_settings.LockRetries, async i =>
+            return WithRetry(withLock ? _settings.LockRetries : 0, async i =>
             {
                 var lockid = withLock ? DateTime.Now.Ticks : (long?)null;
                 var autoUnlock = DateTime.Now.Add(-_settings.AutoUnlockDelay).Ticks;
@@ -66,9 +66,9 @@ namespace DbQueue.MongoDB
                         throw new Exception(LockFailed);
                 }
 
-                return new IDbqDatabaseItem()
+                return new DbqDatabaseItem()
                 {
-                    Key = entity.Id,
+                    Id = entity.Id,
                     Queue = entity.Queue,
                     Data = entity.Data,
                     IsBlob = entity.IsBlob,
