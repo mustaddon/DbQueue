@@ -6,6 +6,7 @@
 * SQL/NoSQL database
 * Queue/Stack mode
 * Storing BLOBs in the file system
+* AvailableAfter/RemoveAfter date
 
 
 ## Example 1: Queue with MongoDB
@@ -60,7 +61,15 @@ await using (var ack = await queue.Pop<string>(queueName))
 ```
 
 
-## Example 3: Receive many
+## Example 3: Delays
+```C#
+await queue.Push(queueName, "Some byte[], stream, string and etc...",
+    availableAfter: DateTime.Now.AddDays(3),
+    removeAfter: DateTime.Now.AddDays(5));
+```
+
+
+## Example 4: Receive many
 ```C#
 for (var i = 0; i < 5; i++)
     await queue.Push(queueName, $"item-{i}");
@@ -78,7 +87,7 @@ await foreach(var data in queue.PopMany<string>(queueName).WithAutoAck())
 ```
 
 
-## Example 4: Stack usage
+## Example 5: Stack usage
 ```C#
 var stack = services.GetRequiredService<IDbStack>();
 var stackName = "examples";
@@ -99,4 +108,3 @@ await foreach(var data in stack.PopMany<string>(stackName).WithAutoAck())
 ```
 
 [More examples...](https://github.com/mustaddon/DbQueue/tree/main/Examples/)
-
