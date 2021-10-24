@@ -63,9 +63,14 @@ await using (var ack = await queue.Pop<string>(queueName))
 
 ## Example 3: Delays
 ```C#
-await queue.Push(queueName, "Some byte[], stream, string and etc...",
+// add delayed item
+await queue.Push(queueName, "Some byte[], stream, string and etc...", 
+    type: "example_type",
     availableAfter: DateTime.Now.AddDays(3),
     removeAfter: DateTime.Now.AddDays(5));
+
+// for removing
+await queue.Clear(queueName, "example_type");
 ```
 
 
