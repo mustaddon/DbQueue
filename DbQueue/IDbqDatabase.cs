@@ -7,12 +7,12 @@ namespace DbQueue
 {
     public interface IDbqDatabase
     {
-        Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default);
+        Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default);
         Task<DbqDatabaseItem?> Get(string queue, bool desc = false, long index = 0, bool withLock = false, CancellationToken cancellationToken = default);
         Task<long> Count(string queue, CancellationToken cancellationToken = default);
         Task Unlock(string queue, long lockid, CancellationToken cancellationToken = default);
         Task<bool> Remove(string key, CancellationToken cancellationToken = default);
-        IAsyncEnumerable<byte[]> Clear(string queue, IEnumerable<int>? types = null, CancellationToken cancellationToken = default);
+        IAsyncEnumerable<byte[]> Clear(string queue, IEnumerable<string>? types = null, CancellationToken cancellationToken = default);
     }
 
     public class DbqDatabaseItem

@@ -6,9 +6,9 @@ namespace DbQueue
     public static partial class DbqExtensions
     {
         public static Task Clear(this IDbQueue dbq,
-               string queue, int? type = null, CancellationToken cancellationToken = default)
+               string queue, string? type = null, CancellationToken cancellationToken = default)
         {
-            return dbq.Clear(queue, type.HasValue ? new[] { type.Value } : null, cancellationToken);
+            return dbq.Clear(queue, type != null ? new[] { type } : null, cancellationToken);
         }
 
     }

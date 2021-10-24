@@ -10,28 +10,28 @@ namespace DbQueue
     public static partial class DbqExtensions
     {
         public static async Task Push(this IDbQueue dbq,
-               IEnumerable<string> queues, Stream data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+               IEnumerable<string> queues, Stream data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             await using var enumerator = data.GetAsyncEnumerator(cancellationToken);
             await dbq.Push(queues, enumerator, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static async Task Push(this IDbQueue dbq,
-               IEnumerable<string> queues, byte[] data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+               IEnumerable<string> queues, byte[] data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             await using var enumerator = data.GetChunkEnumerator();
             await dbq.Push(queues, enumerator, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static async Task Push(this IDbQueue dbq,
-               IEnumerable<string> queues, IAsyncEnumerable<byte[]> data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+               IEnumerable<string> queues, IAsyncEnumerable<byte[]> data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             await using var enumerator = data.GetAsyncEnumerator(cancellationToken);
             await dbq.Push(queues, enumerator, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static async Task Push(this IDbQueue dbq,
-               IEnumerable<string> queues, object? data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+               IEnumerable<string> queues, object? data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             if (data == null || data is byte[])
             {
@@ -49,7 +49,7 @@ namespace DbQueue
 
             using (var writer = new StreamWriter(ms, TextEncoding, 4096, true))
             {
-                if(data is string)
+                if (data is string)
                     await writer.WriteAsync(data as string);
                 else
                     JsonSerializer.Create(JsonSerializerSettings).Serialize(writer, data);
@@ -61,31 +61,31 @@ namespace DbQueue
         }
 
         public static Task Push(this IDbQueue dbq,
-               string queue, IAsyncEnumerator<byte[]> data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+               string queue, IAsyncEnumerator<byte[]> data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             return dbq.Push(new[] { queue }, data, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static Task Push(this IDbQueue dbq,
-               string queue, Stream data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+               string queue, Stream data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             return Push(dbq, new[] { queue }, data, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static Task Push(this IDbQueue dbq,
-               string queue, byte[] data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+               string queue, byte[] data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             return Push(dbq, new[] { queue }, data, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static Task Push(this IDbQueue dbq,
-               string queue, IAsyncEnumerable<byte[]> data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+               string queue, IAsyncEnumerable<byte[]> data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             return Push(dbq, new[] { queue }, data, type, availableAfter, removeAfter, cancellationToken);
         }
 
         public static Task Push(this IDbQueue dbq,
-               string queue, object? data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+               string queue, object? data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             return Push(dbq, new[] { queue }, data, type, availableAfter, removeAfter, cancellationToken);
         }

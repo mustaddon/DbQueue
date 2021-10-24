@@ -25,8 +25,11 @@ namespace DbQueue
 
         public bool StackMode { get; set; }
 
-        public async Task Push(IEnumerable<string> queues, IAsyncEnumerator<byte[]> data, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+        public async Task Push(IEnumerable<string> queues, IAsyncEnumerator<byte[]> data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
+            if (removeAfter <= DateTime.Now)
+                return;
+
             queues = queues.Select(NormQueueName).Distinct().ToList();
 
             if (!queues.Any())
@@ -69,7 +72,7 @@ namespace DbQueue
             return _database.Count(NormQueueName(queue), cancellationToken);
         }
 
-        public async Task Clear(string queue, IEnumerable<int>? types = null, CancellationToken cancellationToken = default)
+        public async Task Clear(string queue, IEnumerable<string>? types = null, CancellationToken cancellationToken = default)
         {
             await foreach (var blobKey in _database.Clear(NormQueueName(queue), types, cancellationToken))
                 await _blobStorage.Remove(GetBlobId(blobKey));

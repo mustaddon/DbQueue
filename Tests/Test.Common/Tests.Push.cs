@@ -114,18 +114,19 @@ namespace Test.Common
             var items = new[] {
                 DateTime.Today.AddDays(-1),
                 DateTime.Today,
+                DateTime.Today.AddDays(1),
             };
 
-            for(var i=0; i<items.Length;i++)
+            for (var i = 0; i < items.Length; i++)
             {
                 var item = items[i];
-                await _dbq.Push(queueName, Utils.GenerateText(), i, item, item.AddDays(1));
-                await _dbq.Push(queueName, Utils.GenerateData(), i, item, item.AddDays(1));
-                await _dbq.Push(queueName, new MemoryStream(Utils.GenerateData()), i, item, item.AddDays(1));
-                await _dbq.Push(queueName, Utils.GenerateObject(), i, item, item.AddDays(1));
+                await _dbq.Push(queueName, Utils.GenerateText(), i.ToString(), item, item.AddDays(1));
+                await _dbq.Push(queueName, Utils.GenerateData(), i.ToString(), item, item.AddDays(1));
+                await _dbq.Push(queueName, new MemoryStream(Utils.GenerateData()), i.ToString(), item, item.AddDays(1));
+                await _dbq.Push(queueName, Utils.GenerateObject(), i.ToString(), item, item.AddDays(1));
             }
 
-            Assert.AreEqual(4, await _dbq.Count(queueName));
+            Assert.AreEqual(8, await _dbq.Count(queueName));
             await _dbq.Clear(queueName);
         }
 

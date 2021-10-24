@@ -20,7 +20,7 @@ CREATE TABLE [DbqDatabase].[dbo].[DbQueue]
     [Data] VARBINARY (MAX) NOT NULL,
     [Hash] BIGINT NOT NULL,
     [IsBlob] BIT NOT NULL DEFAULT 0,
-    [Type] INT NOT NULL DEFAULT 0,
+    [Type] NVARCHAR(256) NULL,
     [AvailableAfter] DATETIME NULL,
     [RemoveAfter] DATETIME NULL,
     [LockId] BIGINT NULL,

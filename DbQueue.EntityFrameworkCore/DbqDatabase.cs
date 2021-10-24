@@ -21,7 +21,7 @@ namespace DbQueue.EntityFrameworkCore
         readonly DbqDbContext _context;
         readonly DbqDbSettings _settings;
 
-        public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+        public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             foreach (var queue in queues)
                 await _context.DbQueue.AddAsync(new()
@@ -102,7 +102,7 @@ namespace DbQueue.EntityFrameworkCore
                 || !await _context.DbQueue.AnyAsync(x => x.Hash == entity.Hash, cancellationToken);
         }
 
-        public async IAsyncEnumerable<byte[]> Clear(string queue, IEnumerable<int>? types = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<byte[]> Clear(string queue, IEnumerable<string>? types = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var batchSize = 1000;
             types = types?.Any() == true ? types.ToArray() : null;

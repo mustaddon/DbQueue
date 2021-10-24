@@ -27,7 +27,7 @@ namespace DbQueue.MongoDB
         readonly Lazy<IMongoCollection<MongoItem>> _dbItems;
 
 
-        public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, int type = 0, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
+        public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             await _dbItems.Value.InsertManyAsync(queues.Select(queue => new MongoItem
             {
@@ -107,10 +107,10 @@ namespace DbQueue.MongoDB
                 || 0 == await _dbItems.Value.CountDocumentsAsync(x => x.Hash == entity.Hash, null, cancellationToken);
         }
 
-        public async IAsyncEnumerable<byte[]> Clear(string queue, IEnumerable<int>? types = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<byte[]> Clear(string queue, IEnumerable<string>? types = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var batchSize = 1000;
-            var typesArray = types?.Any() == true ? types.ToArray() : new int[0];
+            var typesArray = types?.Any() == true ? types.ToArray() : new string[0];
 
             while (true)
             {
