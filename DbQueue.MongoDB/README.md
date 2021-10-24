@@ -63,14 +63,9 @@ await using (var ack = await queue.Pop<string>(queueName))
 
 ## Example 3: Delays
 ```C#
-// add delayed item
-await queue.Push(queueName, "Some byte[], stream, string and etc...", 
-    type: "example_type",
+await queue.Push(queueName, "example data", 
     availableAfter: DateTime.Now.AddDays(3),
     removeAfter: DateTime.Now.AddDays(5));
-
-// for removing
-await queue.Clear(queueName, "example_type");
 ```
 
 
@@ -110,6 +105,20 @@ await foreach(var data in stack.PopMany<string>(stackName).WithAutoAck())
 // item-2
 // item-1
 // item-0
+```
+
+
+## Example 6: Removing
+```C#
+await queue.Push(queueName, "example data 1");
+await queue.Push(queueName, "example data 2", "example_type");
+await queue.Push(queueName, "example data 3", "example_type");
+
+// clear by type
+await queue.Clear(queueName, "example_type");
+
+// clear all
+await queue.Clear(queueName);
 ```
 
 [More examples...](https://github.com/mustaddon/DbQueue/tree/main/Examples/)
