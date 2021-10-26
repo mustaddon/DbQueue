@@ -156,7 +156,7 @@ namespace Test.Common
 
             var text = Utils.GenerateText();
 
-            await _dbq.Push(queueName, text);
+            await _dbq.Push(queueName, text, "aaa", DateTime.Now, DateTime.Now.AddDays(1));
 
             await using (var ack1 = await _dbq.Pop(queueName).WithAutoAck())
             {

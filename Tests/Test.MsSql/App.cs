@@ -16,7 +16,7 @@ namespace Test.EFCore
                     services.AddDbqEfc((sp, options) =>
                     {
                         options.Database.ContextConfigurator = (db) => db.UseSqlServer(hostContext.Configuration.GetConnectionString("dbq"));
-                    });
+                    }, ServiceLifetime.Transient);
                 });
 
             return builder.Build();

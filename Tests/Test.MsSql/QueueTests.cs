@@ -6,9 +6,9 @@ using Test.Common;
 namespace Test.EFCore
 {
     [TestClass()]
-    public class StackTests : Tests
+    public class QueueTests : Tests
     {
-        public StackTests() : base(App.Instance.Value.Services.GetService<IDbStack>() as Dbq)
+        public QueueTests() : base(() => App.Instance.Value.Services.GetService<IDbQueue>() as Dbq)
         {
         }
     }

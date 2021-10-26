@@ -25,6 +25,7 @@ namespace DbQueue.MongoDB
 
         readonly DbqDbSettings _settings;
         readonly Lazy<IMongoCollection<MongoItem>> _dbItems;
+        readonly Random _rnd = new();
 
 
         public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
@@ -36,49 +37,43 @@ namespace DbQueue.MongoDB
                 Data = data,
                 Hash = GetHash(data),
                 Type = type,
-                AvailableAfter = availableAfter?.Ticks,
-                RemoveAfter = removeAfter?.Ticks,
+                AvailableAfter = availableAfter?.ToUniversalTime().Ticks,
+                RemoveAfter = removeAfter?.ToUniversalTime().Ticks,
             }), null, cancellationToken);
         }
 
-        public Task<DbqDatabaseItem?> Get(string queue, bool desc = false, long index = 0, bool withLock = false, CancellationToken cancellationToken = default)
+        public async Task<DbqDatabaseItem?> Get(string queue, bool desc = false, long index = 0, bool withLock = false, CancellationToken cancellationToken = default)
         {
-            return WithRetry(withLock ? _settings.LockRetries : 0, async i =>
-            {
-                var lockid = withLock ? DateTime.Now.Ticks : (long?)null;
-                var autoUnlock = DateTime.Now.Add(-_settings.AutoUnlockDelay).Ticks;
+            var sort = desc ? Builders<MongoItem>.Sort.Descending(x => x.Id) : Builders<MongoItem>.Sort.Ascending(x => x.Id);
+            var utcNow = DateTime.UtcNow;
 
-                var entity = await _dbItems.Value
-                    .Find(x => x.Queue == queue && (x.AvailableAfter == null || x.AvailableAfter < DateTime.Now.Ticks)
-                        && (x.LockId == null || x.LockId == lockid || x.LockId < autoUnlock))
-                    .Sort(desc ? Builders<MongoItem>.Sort.Descending(x => x.Id) : Builders<MongoItem>.Sort.Ascending(x => x.Id))
+            if (!withLock)
+                return Map(await _dbItems.Value
+                    .Find(x => x.Queue == queue && (x.AvailableAfter == null || x.AvailableAfter < utcNow.Ticks))
+                    .Sort(sort)
                     .Skip((int)index)
-                    .FirstOrDefaultAsync(cancellationToken);
+                    .FirstOrDefaultAsync(cancellationToken));
 
-                if (entity == null)
-                    return null;
+            var lockId = utcNow.Ticks + _rnd.Next(-5000, 5000);
+            var lockLimit = utcNow.Add(-_settings.AutoUnlockDelay).Ticks;
 
-                if (lockid.HasValue)
-                {
-                    var result = await _dbItems.Value.UpdateOneAsync(
-                        filter: x => x.Id == entity.Id && x.LockId == entity.LockId,
-                        update: Builders<MongoItem>.Update.Set(x => x.LockId, lockid),
-                        cancellationToken: cancellationToken);
+            if (index > 0)
+                throw new Exception(LockFailed);
 
-                    if (result.ModifiedCount == 0)
-                        throw new Exception(LockFailed);
-                }
+            var entity = await _dbItems.Value.FindOneAndUpdateAsync<MongoItem>(
+                filter: x => x.Queue == queue
+                    && (x.AvailableAfter == null || x.AvailableAfter < utcNow.Ticks)
+                    && (x.LockId == null || x.LockId < lockLimit),
+                update: Builders<MongoItem>.Update.Set(x => x.LockId, lockId),
+                options: new FindOneAndUpdateOptions<MongoItem> { Sort = sort },
+                cancellationToken: cancellationToken);
 
-                return new DbqDatabaseItem()
-                {
-                    Id = entity.Id,
-                    Queue = entity.Queue,
-                    Data = entity.Data,
-                    IsBlob = entity.IsBlob,
-                    RemoveAfter = entity.RemoveAfter.HasValue ? new DateTime(entity.RemoveAfter.Value) : null,
-                    LockId = lockid,
-                };
-            });
+            if (entity == null)
+                return null;
+
+            entity.LockId = lockId;
+
+            return Map(entity);
         }
 
         public async Task Unlock(string queue, long lockid, CancellationToken cancellationToken = default)
@@ -92,10 +87,9 @@ namespace DbQueue.MongoDB
         public Task<long> Count(string queue, CancellationToken cancellationToken = default)
         {
             return _dbItems.Value
-                .CountDocumentsAsync(x => x.Queue == queue && (x.RemoveAfter == null || x.RemoveAfter > DateTime.Now.Ticks),
+                .CountDocumentsAsync(x => x.Queue == queue && (x.RemoveAfter == null || x.RemoveAfter > DateTime.UtcNow.Ticks),
                 null, cancellationToken);
         }
-
 
         public async Task<bool> Remove(string key, CancellationToken cancellationToken = default)
         {
@@ -141,19 +135,18 @@ namespace DbQueue.MongoDB
             }
         }
 
-        private static async Task<T?> WithRetry<T>(int retries, Func<int, Task<T>> task)
+        private DbqDatabaseItem? Map(MongoItem? entity)
         {
-            for (var i = 0; i <= retries; i++)
-                try
-                {
-                    return await task(i);
-                }
-                catch
-                {
-                    if (i == retries) throw;
-                }
-
-            return default;
+            return entity == null ? null : new()
+            {
+                Id = entity.Id,
+                Queue = entity.Queue,
+                Data = entity.Data,
+                IsBlob = entity.IsBlob,
+                LockId = entity.LockId,
+                RemoveAfter = !entity.RemoveAfter.HasValue ? null
+                    : new DateTime(entity.RemoveAfter.Value, DateTimeKind.Utc),
+            };
         }
 
         private static long GetHash(byte[] data)

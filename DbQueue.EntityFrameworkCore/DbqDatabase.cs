@@ -20,6 +20,7 @@ namespace DbQueue.EntityFrameworkCore
 
         readonly DbqDbContext _context;
         readonly DbqDbSettings _settings;
+        readonly Random _rnd = new();
 
         public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
@@ -31,37 +32,61 @@ namespace DbQueue.EntityFrameworkCore
                     Data = data,
                     Hash = GetHash(data),
                     Type = type,
-                    AvailableAfter = availableAfter,
-                    RemoveAfter = removeAfter,
+                    AvailableAfter = availableAfter?.ToUniversalTime(),
+                    RemoveAfter = removeAfter?.ToUniversalTime(),
                 }, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
+            _context.ChangeTracker.Clear();
         }
 
-        public Task<DbqDatabaseItem?> Get(string queue, bool desc = false, long index = 0, bool withLock = false, CancellationToken cancellationToken = default)
+        public async Task<DbqDatabaseItem?> Get(string queue, bool desc = false, long index = 0, bool withLock = false, CancellationToken cancellationToken = default)
         {
-            return WithRetry(_settings.LockRetries, async (i) =>
-            {
-                var lockid = withLock ? DateTime.Now.Ticks : (long?)null;
-
-                var entity = await _context.DbQueue
-                    .Where(x => x.Queue == queue && (x.AvailableAfter == null || x.AvailableAfter < DateTime.Now))
-                    .Where(IsUnlocked(lockid))
+            if (!withLock)
+                return Map(await _context.DbQueue
+                    .Where(Available(queue))
                     .OrderBy(x => x.Id, desc)
                     .Skip((int)index)
-                    .FirstOrDefaultAsync(cancellationToken);
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(cancellationToken));
 
-                if (entity == null)
-                    return null;
+            var lockId = DateTime.UtcNow.Ticks + _rnd.Next(-5000, 5000);
+            var lockLimit = DateTime.UtcNow.Add(-_settings.AutoUnlockDelay).Ticks;
+            var concurrentGetAndLock = SqlConcurrency.GetAndLock(_context.Database.ProviderName);
 
-                if (lockid.HasValue)
-                {
-                    entity.LockId = lockid;
-                    await _context.SaveChangesAsync(cancellationToken);
-                }
+            if (concurrentGetAndLock != null)
+                return Map((await _context.DbQueue
+                    .FromSqlRaw(concurrentGetAndLock, queue, desc, index, lockId, lockLimit, DateTime.UtcNow)
+                    .AsNoTracking()
+                    .ToListAsync(cancellationToken))
+                    .SingleOrDefault());
 
-                return Map(entity);
-            });
+            var entity = await _context.DbQueue
+                .Where(Available(queue))
+                .Where(Unlocked())
+                .OrderBy(x => x.Id, desc)
+                .Skip((int)index)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (entity == null)
+                return null;
+
+            entity.LockId = lockId;
+            await _context.SaveChangesAsync(cancellationToken);
+            _context.ChangeTracker.Clear();
+
+            return Map(entity);
+        }
+
+        private Expression<Func<EfcItem, bool>> Unlocked()
+        {
+            var lockLimit = DateTime.UtcNow.Add(-_settings.AutoUnlockDelay).Ticks;
+            return x => x.LockId == null || x.LockId < lockLimit;
+        }
+
+        private static Expression<Func<EfcItem, bool>> Available(string queue)
+        {
+            return x => x.Queue == queue && (x.AvailableAfter == null || x.AvailableAfter < DateTime.UtcNow);
         }
 
         public async Task Unlock(string queue, long lockid, CancellationToken cancellationToken = default)
@@ -77,12 +102,13 @@ namespace DbQueue.EntityFrameworkCore
                 entity.LockId = null;
 
             await _context.SaveChangesAsync(cancellationToken);
+            _context.ChangeTracker.Clear();
         }
 
         public Task<long> Count(string queue, CancellationToken cancellationToken = default)
         {
             return _context.DbQueue
-                .Where(x => x.Queue == queue && (x.RemoveAfter == null || x.RemoveAfter > DateTime.Now))
+                .Where(x => x.Queue == queue && (x.RemoveAfter == null || x.RemoveAfter > DateTime.UtcNow))
                 .LongCountAsync(cancellationToken);
         }
 
@@ -136,9 +162,9 @@ namespace DbQueue.EntityFrameworkCore
             }
         }
 
-        private DbqDatabaseItem Map(EfcItem entity)
+        private DbqDatabaseItem? Map(EfcItem? entity)
         {
-            return new()
+            return entity == null ? null : new()
             {
                 Id = entity.Id.ToString(),
                 Queue = entity.Queue,
@@ -149,34 +175,12 @@ namespace DbQueue.EntityFrameworkCore
             };
         }
 
-        private Expression<Func<EfcItem, bool>> IsUnlocked(long? lockid)
-        {
-            var autoUnlock = DateTime.Now.Add(-_settings.AutoUnlockDelay).Ticks;
-            return x => x.LockId == null || x.LockId == lockid || x.LockId < autoUnlock;
-        }
-
-        private static async Task<T?> WithRetry<T>(int retries, Func<int, Task<T>> task)
-        {
-            for (var i = 0; i <= retries; i++)
-                try
-                {
-                    return await task(i);
-                }
-                catch
-                {
-                    if (i == retries) throw;
-                }
-
-            return default;
-        }
-
         private static long GetHash(byte[] data)
         {
             using var sha = SHA256.Create();
             return BitConverter.ToInt64(sha.ComputeHash(data));
         }
 
-        internal static readonly byte[] BytesEmpty = new byte[0];
     }
 
 

@@ -3,12 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Test.Common;
 
-namespace Test.Mongo
+namespace Test.EFCore
 {
     [TestClass()]
-    public class QueueTests : Tests
+    public class StackTests : Tests
     {
-        public QueueTests() : base(() => App.Instance.Value.Services.GetService<IDbQueue>() as Dbq)
+        public StackTests() : base(() => App.Instance.Value.Services.GetService<IDbStack>() as Dbq)
         {
         }
     }

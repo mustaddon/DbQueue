@@ -7,6 +7,7 @@
 * Queue/Stack mode
 * Storing BLOBs in the file system
 * AvailableAfter/RemoveAfter date
+* Concurrency
 
 
 ## Example 1: Queue with MsSQL via EFCore
@@ -17,11 +18,11 @@ GO
 CREATE TABLE [DbqDatabase].[dbo].[DbQueue]
 (
     [Id] BIGINT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
-    [Queue] NVARCHAR(256) NOT NULL,
+    [Queue] NVARCHAR(255) NOT NULL,
     [Data] VARBINARY (MAX) NOT NULL,
     [Hash] BIGINT NOT NULL,
     [IsBlob] BIT NOT NULL DEFAULT 0,
-    [Type] NVARCHAR(256) NULL,
+    [Type] NVARCHAR(255) NULL,
     [AvailableAfter] DATETIME NULL,
     [RemoveAfter] DATETIME NULL,
     [LockId] BIGINT NULL,

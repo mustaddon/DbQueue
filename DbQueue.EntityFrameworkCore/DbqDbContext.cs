@@ -34,7 +34,7 @@ namespace DbQueue.EntityFrameworkCore
     {
         public long Id { get; set; }
         public string Queue { get; set; } = string.Empty;
-        public byte[] Data { get; set; } = DbqDatabase.BytesEmpty;
+        public byte[] Data { get; set; } = BytesEmpty;
         public bool IsBlob { get; set; }
         public long Hash { get; set; }
         public string? Type { get; set; }
@@ -45,5 +45,7 @@ namespace DbQueue.EntityFrameworkCore
 
         public override int GetHashCode() => Id.GetHashCode();
         public override bool Equals(object obj) => Id == (obj as EfcItem)?.Id;
+
+        static readonly byte[] BytesEmpty = new byte[0];
     }
 }

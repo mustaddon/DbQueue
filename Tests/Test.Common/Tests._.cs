@@ -1,5 +1,6 @@
 ﻿using DbQueue;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,11 +8,13 @@ namespace Test.Common
 {
     public partial class Tests
     {
-        public Tests(Dbq dbq)
+        public Tests(Func<Dbq> dbqFactory)
         {
-            _dbq = dbq;
+            _dbqFactory = dbqFactory;
+            _dbq = dbqFactory();
         }
 
+        readonly Func<Dbq> _dbqFactory;
         readonly Dbq _dbq;
 
         private string GetQueueName(string val = null) => $"test_{(_dbq.StackMode ? "stack" : "queue")}_{val ?? default}";

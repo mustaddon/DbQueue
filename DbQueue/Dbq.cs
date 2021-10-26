@@ -27,7 +27,10 @@ namespace DbQueue
 
         public async Task Push(IEnumerable<string> queues, IAsyncEnumerator<byte[]> data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
-            if (removeAfter <= (availableAfter ?? DateTime.Now))
+            availableAfter = availableAfter?.ToUniversalTime();
+            removeAfter = removeAfter?.ToUniversalTime();
+
+            if (removeAfter <= (availableAfter ?? DateTime.UtcNow))
                 return;
 
             queues = queues.Select(NormQueueName).Distinct().ToList();
@@ -114,7 +117,7 @@ namespace DbQueue
         {
             var item = await _database.Get(queue, StackMode, index, withLock, cancellationToken);
 
-            while (item != null && item.RemoveAfter < DateTime.Now)
+            while (item != null && item.RemoveAfter < DateTime.UtcNow)
             {
                 await Remove(item, cancellationToken);
                 item = await _database.Get(queue, StackMode, index, withLock, cancellationToken);

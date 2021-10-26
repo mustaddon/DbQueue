@@ -7,6 +7,7 @@
 * Queue/Stack mode
 * Storing BLOBs in the file system
 * AvailableAfter/RemoveAfter date
+* Concurrency
 
 
 ## Example 1: Queue with MongoDB
