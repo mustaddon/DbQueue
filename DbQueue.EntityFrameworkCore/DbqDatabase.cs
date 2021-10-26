@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DbQueue.EntityFrameworkCore
 {
-    public class DbqDatabase : IDbqDatabase
+    public class DbqDatabase : IDbqDatabase, IDisposable
     {
         public DbqDatabase(DbqDbSettings? settings = null)
         {
@@ -21,6 +21,8 @@ namespace DbQueue.EntityFrameworkCore
         readonly DbqDbContext _context;
         readonly DbqDbSettings _settings;
         readonly Random _rnd = new();
+
+        public void Dispose() => _context.Dispose();
 
         public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
@@ -180,7 +182,6 @@ namespace DbQueue.EntityFrameworkCore
             using var sha = SHA256.Create();
             return BitConverter.ToInt64(sha.ComputeHash(data));
         }
-
     }
 
 

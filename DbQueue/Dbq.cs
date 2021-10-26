@@ -85,7 +85,7 @@ namespace DbQueue
         {
             var item = await Get(NormQueueName(queue), index, false, cancellationToken);
 
-            return item == null ? null : GetData(item, cancellationToken).GetAsyncEnumerator();
+            return item == null ? null : GetData(item, cancellationToken);
         }
 
         public async Task<IDbqAcknowledgement<IAsyncEnumerator<byte[]>>?> Pop(string queue, CancellationToken cancellationToken = default)
@@ -95,7 +95,7 @@ namespace DbQueue
             if (item == null)
                 return null;
 
-            var result = GetData(item, cancellationToken).GetAsyncEnumerator();
+            var result = GetData(item, cancellationToken);
             var commited = false;
 
             return new DbqAck<IAsyncEnumerator<byte[]>>(result,
@@ -132,7 +132,7 @@ namespace DbQueue
                 await _blobStorage.Remove(GetBlobId(item.Data));
         }
 
-        private async IAsyncEnumerable<byte[]> GetData(DbqDatabaseItem item, [EnumeratorCancellation] CancellationToken cancellationToken)
+        private async IAsyncEnumerator<byte[]> GetData(DbqDatabaseItem item, CancellationToken cancellationToken)
         {
             if (!item.IsBlob)
                 yield return item.Data;

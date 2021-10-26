@@ -1,0 +1,15 @@
+CREATE TABLE `DbqDatabase`.`DbQueue`
+(
+	`Id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+	`Queue` NVARCHAR(255) NOT NULL,
+	`Data` VARBINARY(4096) NOT NULL,
+	`Hash` BIGINT NOT NULL,
+	`IsBlob` BIT NOT NULL DEFAULT 0,
+	`Type` NVARCHAR(255) NULL,
+	`AvailableAfter` DATETIME NULL,
+	`RemoveAfter` DATETIME NULL,
+	`LockId` BIGINT NULL,
+	INDEX (`Queue`),
+	INDEX (`Hash`),
+	INDEX (`LockId`)
+);

@@ -154,14 +154,16 @@ namespace Test.Common
             var queueName = GetQueueName(nameof(TestAutoAckBreak));
             await _dbq.Clear(queueName);
 
-            var text = Utils.GenerateText();
+            var text = "short";// Utils.GenerateText();
 
-            await _dbq.Push(queueName, text, "aaa", DateTime.Now, DateTime.Now.AddDays(1));
+            await _dbq.Push(queueName, text, "test", DateTime.Now, DateTime.Now.AddDays(1));
 
             await using (var ack1 = await _dbq.Pop(queueName).WithAutoAck())
             {
                 // break
             }
+
+            await Task.Delay(1000);
 
             Assert.AreEqual(1, await _dbq.Count(queueName));
 

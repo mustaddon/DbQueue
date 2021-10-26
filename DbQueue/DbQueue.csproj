@@ -6,17 +6,17 @@
     <Nullable>enable</Nullable>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
-	<AssemblyVersion>1.0.3</AssemblyVersion>
-    <FileVersion>1.0.3</FileVersion>
-    <Version>1.0.3</Version>
+	<AssemblyVersion>1.0.4</AssemblyVersion>
+    <FileVersion>1.0.4</FileVersion>
+    <Version>1.0.4</Version>
 	<Company></Company>
     <Authors>Leonid Salavatov</Authors>
     <Copyright>Leonid Salavatov 2021</Copyright>
     <PackageId>DbQueue</PackageId>
     <Product>DbQueue</Product>
     <Title>DbQueue</Title>
-    <Description>.NET Database Queue/Stack</Description>
-    <PackageTags>database concurrent queue dbqueue stack dbstack dbq dotnet</PackageTags>
+    <Description>.NET Database concurrent Queue/Stack</Description>
+    <PackageTags>database concurrent queue dbqueue stack dbstack dbq sql nosql dotnet</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/mustaddon/DbQueue</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mustaddon/DbQueue</RepositoryUrl>

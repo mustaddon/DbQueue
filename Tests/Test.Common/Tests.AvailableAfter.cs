@@ -14,7 +14,7 @@ namespace Test.Common
 
             await _dbq.Clear(queueName);
 
-            var text = Utils.GenerateText();
+            var text = "short";// Utils.GenerateText();
             var delay = 2000;
 
             await _dbq.Push(queueName, text,
@@ -24,7 +24,7 @@ namespace Test.Common
 
             Assert.AreEqual(null, result);
 
-            await Task.Delay(delay + 1);
+            await Task.Delay(2 * delay);
 
             result = await _dbq.Peek<string>(queueName);
 
@@ -40,7 +40,7 @@ namespace Test.Common
 
             await _dbq.Clear(queueName);
 
-            var text = Utils.GenerateText();
+            var text = "short"; // Utils.GenerateText();
             var delay = 2000;
 
             await _dbq.Push(queueName, text,
@@ -50,7 +50,7 @@ namespace Test.Common
 
             Assert.AreEqual(null, result);
 
-            await Task.Delay(delay + 1);
+            await Task.Delay(2 * delay);
 
             result = await _dbq.Pop<string>(queueName).WithAutoAck();
 

@@ -13,7 +13,7 @@ namespace DbQueue.EntityFrameworkCore
         {
             {
                 "Microsoft.EntityFrameworkCore.SqlServer",
-                @";WITH item AS (
+                @";WITH cte AS (
 	                SELECT * FROM [DbQueue]
 	                WHERE [Queue]=@p0 and ([LockId] is NULL or [LockId]<@p4) and ([AvailableAfter] is NULL or [AvailableAfter]<@p5)
 	                ORDER BY 
@@ -21,7 +21,7 @@ namespace DbQueue.EntityFrameworkCore
 		                CASE WHEN @p1=1 THEN [Id] END DESC
 	                OFFSET @p2 ROWS 
 	                FETCH NEXT 1 ROWS ONLY) 
-                UPDATE item SET [LockId]=@p3
+                UPDATE cte SET [LockId]=@p3
                 SELECT * FROM [DbQueue] WHERE [Queue]=@p0 and [LockId]=@p3"
             },
             {
@@ -38,7 +38,20 @@ namespace DbQueue.EntityFrameworkCore
 	                FOR UPDATE SKIP LOCKED)
                 RETURNING *;"
             },
+            { "MySql.EntityFrameworkCore", GetAndLockMySql },
+            { "Pomelo.EntityFrameworkCore.MySql", GetAndLockMySql },
         };
+
+        const string GetAndLockMySql =
+            @"LOCK TABLES `DbQueue` WRITE;
+            UPDATE `DbQueue` SET `LockId`=@p3
+            WHERE `Queue`=@p0 and (`LockId` is NULL or `LockId`<@p4) and (`AvailableAfter` is NULL or `AvailableAfter`<@p5)
+            ORDER BY 
+	            CASE WHEN @p1=0 THEN `Id` END ASC,
+	            CASE WHEN @p1=1 THEN `Id` END DESC
+            LIMIT 1;
+            UNLOCK TABLES;
+            SELECT * FROM `DbQueue` WHERE `Queue`=@p0 and `LockId`=@p3;";
 
     }
 }

@@ -156,6 +156,5 @@ namespace DbQueue.MongoDB
         }
 
         private static readonly string LockFailed = "Failed to lock queue item";
-        internal static readonly byte[] BytesEmpty = new byte[0];
     }
 }

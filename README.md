@@ -1,13 +1,13 @@
 # DbQueue [![NuGet version](https://badge.fury.io/nu/DbQueue.svg)](http://badge.fury.io/nu/DbQueue)
-.NET Database Queue/Stack
+.NET Database concurrent Queue/Stack
 
 
 ## Features
 * SQL/NoSQL database
 * Queue/Stack mode
-* Storing BLOBs in the file system
-* AvailableAfter/RemoveAfter date
 * Concurrency
+* AvailableAfter/RemoveAfter date
+* Storing BLOBs in the file system
 
 
 ## Example 1: Queue with MsSQL via EFCore
