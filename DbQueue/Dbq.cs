@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DbQueue
 {
-    public class Dbq : IDbQueue, IDbStack
+    public class Dbq : IDbqBoth
     {
         public Dbq(IDbqDatabase database, IDbqBlobStorage blobStorage, DbqSettings? settings = null)
         {
@@ -106,8 +106,6 @@ namespace DbQueue
                 },
                 dispose: async () =>
                 {
-                    await result.DisposeAsync();
-
                     if (!commited && item.LockId.HasValue)
                         await _database.Unlock(item.Queue, item.LockId.Value);
                 });

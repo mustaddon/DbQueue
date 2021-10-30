@@ -10,6 +10,18 @@
 * Storing BLOBs in the file system
 
 
+## Tested on
+* MS SQL Server 2019
+* PostgreSQL 14
+* MySQL 8.0.27
+* MongoDB 5.0.3
+
+
+## gRPC endpoint implementation
+* [Service](https://github.com/mustaddon/DbQueue/tree/main/DbQueue.Grpc/)
+* [Client](https://github.com/mustaddon/DbQueue/tree/main/DbQueue.Grpc.Client/)
+
+
 ## Example 1: Queue with MsSQL via EFCore
 SQL
 ```sql

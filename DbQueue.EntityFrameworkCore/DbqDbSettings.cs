@@ -5,8 +5,6 @@ namespace DbQueue.EntityFrameworkCore
 {
     public class DbqDbSettings
     {
-        public int LockRetries { get; set; } = 3;
-
         public TimeSpan AutoUnlockDelay { get; set; } = TimeSpan.FromMinutes(5); 
 
         public DfsDbContextConfigurator ContextConfigurator { get; set; } = static x =>

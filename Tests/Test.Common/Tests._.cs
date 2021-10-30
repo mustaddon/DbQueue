@@ -8,14 +8,14 @@ namespace Test.Common
 {
     public partial class Tests
     {
-        public Tests(Func<Dbq> dbqFactory)
+        public Tests(Func<IDbqBoth> dbqFactory)
         {
             _dbqFactory = dbqFactory;
             _dbq = dbqFactory();
         }
 
-        readonly Func<Dbq> _dbqFactory;
-        readonly Dbq _dbq;
+        readonly Func<IDbqBoth> _dbqFactory;
+        readonly IDbqBoth _dbq;
 
         private string GetQueueName(string val = null) => $"test_{(_dbq.StackMode ? "stack" : "queue")}_{val ?? default}";
 

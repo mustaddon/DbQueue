@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Test.Common;
 
-namespace Test.EFCore
+namespace Test.GrpcClient
 {
     [TestClass()]
     public class StackTests : Tests

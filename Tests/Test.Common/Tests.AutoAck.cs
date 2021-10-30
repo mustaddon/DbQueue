@@ -20,7 +20,6 @@ namespace Test.Common
             await _dbq.Push(queueName, text);
 
             var result = await _dbq.Pop<string>(queueName).WithAutoAck();
-
             Assert.AreEqual(text, result);
             Assert.AreEqual(0, await _dbq.Count(queueName));
         }

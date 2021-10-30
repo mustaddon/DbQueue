@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+option csharp_namespace = "DbQueue.Grpc";
+
+package DbQueue;
+
+
+service Endpoint {
+
+  rpc Push (stream PushChunk) returns (Empty);
+
+  rpc Peek (PeekRequest) returns (stream DataChunk);
+
+  rpc Pop (stream PopRequest) returns (stream DataChunk);
+  
+  rpc Count (CountRequest) returns (CountResponse);
+  
+  rpc Clear (ClearRequest) returns (Empty);
+
+}
+
+
+message PushChunk {
+  bytes data = 1;
+  repeated string queue = 2;
+  string type = 3;
+  int64 available_after = 4;
+  int64 remove_after = 5;
+}
+
+message PeekRequest {
+  bool stack_mode = 1;
+  string queue = 2;
+  int64 index = 3;
+}
+
+message PopRequest {
+  bool stack_mode = 1;
+  string queue = 2;
+  bool commit = 3;
+}
+
+message DataChunk {
+  bytes data = 1;
+}
+
+message CountRequest {
+  string queue = 1;
+}
+
+message CountResponse {
+  int64 count = 1;
+}
+
+message ClearRequest {
+  string queue = 1;
+  repeated string type = 2;
+}
+
+message Empty {
+}

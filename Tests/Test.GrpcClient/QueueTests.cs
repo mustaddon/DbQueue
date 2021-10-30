@@ -3,12 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Test.Common;
 
-namespace Test.EFCore
+namespace Test.GrpcClient
 {
     [TestClass()]
-    public class StackTests : Tests
+    public class QueueTests : Tests
     {
-        public StackTests() : base(() => App.Instance.Value.Services.GetService<IDbStack>() as IDbqBoth)
+        public QueueTests() : base(() => App.Instance.Value.Services.GetService<IDbQueue>() as IDbqBoth)
         {
         }
     }

@@ -8,7 +8,7 @@ namespace Test.Mongo
     [TestClass()]
     public class StackTests : Tests
     {
-        public StackTests() : base(() => App.Instance.Value.Services.GetService<IDbStack>() as Dbq)
+        public StackTests() : base(() => App.Instance.Value.Services.GetService<IDbStack>() as IDbqBoth)
         {
         }
     }

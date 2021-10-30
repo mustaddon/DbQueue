@@ -12,4 +12,4 @@ CREATE TABLE `DbqDatabase`.`DbQueue`
 	INDEX (`Queue`),
 	INDEX (`Hash`),
 	INDEX (`LockId`)
-);
+) ENGINE=InnoDB CHARACTER SET utf8mb4;

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -6,9 +6,9 @@
 	<Nullable>enable</Nullable>
 	<SignAssembly>True</SignAssembly>
 	<AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
-	<AssemblyVersion>1.0.4</AssemblyVersion>
-	<FileVersion>1.0.4</FileVersion>
-    <Version>1.0.4</Version>
+	<AssemblyVersion>1.0.5</AssemblyVersion>
+	<FileVersion>1.0.5</FileVersion>
+    <Version>1.0.5</Version>
 	<Company></Company>
 	<Authors>Leonid Salavatov</Authors>
 	<Copyright>Leonid Salavatov 2021</Copyright>
@@ -30,7 +30,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.13.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>

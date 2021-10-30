@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+	<LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DbQueue.Grpc\DbQueue.Grpc.csproj" />
+    <ProjectReference Include="..\..\DbQueue.MongoDB\DbQueue.MongoDB.csproj" />
+  </ItemGroup>
+
+</Project>
