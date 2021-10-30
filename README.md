@@ -17,7 +17,7 @@
 * MongoDB 5.0.3
 
 
-## gRPC endpoint implementation
+## gRPC endpoint
 * [Service](https://github.com/mustaddon/DbQueue/tree/main/DbQueue.Grpc/)
 * [Client](https://github.com/mustaddon/DbQueue/tree/main/DbQueue.Grpc.Client/)
 
