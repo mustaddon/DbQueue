@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace DbQueue
@@ -11,6 +12,6 @@ namespace DbQueue
 
         public bool StackMode { get; set; }
 
-        public int LockTimeout { get; set; } = 300000;
+        public TimeSpan LockTimeout { get; set; } = TimeSpan.FromMinutes(5);
     }
 }

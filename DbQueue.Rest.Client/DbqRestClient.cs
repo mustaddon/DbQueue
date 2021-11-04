@@ -30,7 +30,7 @@ namespace DbQueue
 
         public HttpRequestHeaders DefaultRequestHeaders => _client.Value.DefaultRequestHeaders;
         public bool StackMode { get; set; }
-        public int LockTimeout { get; set; }
+        public TimeSpan LockTimeout { get; set; }
 
         public void Dispose()
         {
@@ -102,7 +102,7 @@ namespace DbQueue
 
         public async Task<IDbqAcknowledgement<IAsyncEnumerator<byte[]>>?> Pop(string queue, CancellationToken cancellationToken = default)
         {
-            var url = $"dbq/{QueueStack()}/{Encode(queue)}?useAck=true&lockTimeout={LockTimeout}";
+            var url = $"dbq/{QueueStack()}/{Encode(queue)}?useAck=true&lockTimeout={(int)LockTimeout.TotalMilliseconds}";
             var response = await _client.Value.GetAsync(url, cancellationToken);
 
             if (response.StatusCode == HttpStatusCode.NoContent)
