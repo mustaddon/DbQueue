@@ -49,106 +49,105 @@ app.Run();
 
 
 ## Example 2: Push
-```json
+```
 // request
 {
-    url: "/dbq/queue/queue_name",
-    method: "POST",
-    body: "some data",
+    "url": "/dbq/queue/queue_name",
+    "method": "POST",
+    "body": "some data",
 }
 
 // request with type
 {
-    url: "/dbq/queue/queue_name?type=some_type",
-    method: "POST",
-    body: "some data",
+    "url": "/dbq/queue/queue_name?type=some_type",
+    "method": "POST",
+    "body": "some data",
 }
 
 // request with delays
 {
-    url: "/dbq/queue/queue_name?removeAfter=2021-11-01T00:00:00Z&removeAfter=2021-12-01T00:00:00Z",
-    method: "POST",
-    body: "some data",
+    "url": "/dbq/queue/queue_name?removeAfter=2021-11-01T00:00:00Z&removeAfter=2021-12-01T00:00:00Z",
+    "method": "POST",
+    "body": "some data",
 }
 ```
 
 
 ## Example 3: Pop
-```json
-// with auto acknowledgement
+```
+// request with auto acknowledgement
 {
-    request: {
-        url: "/dbq/queue/queue_name",
-        method: "GET",
-    }
-    response: {
-        status: 200, // or 204 if null
-        body: "some data",
-    }
+    "url": "/dbq/queue/queue_name",
+    "method": "GET",
+}
+// response
+{
+    "status": 200, // or 204 if null
+    "body": "some data",
 }
 
-// with manual acknowledgement
+
+// request with manual acknowledgement
 {
-    request: {
-        url: "/dbq/queue/queue_name?useAck=true&lockTimeout=60000",
-        method: "GET",
-    }
-    response: {
-        status: 200,
-        headers: { 
-            "ack-key" : "006841a012d84cada37a5f1ff6a1ee40"
-        },
-        body: "some data",
-    }
+    "url": "/dbq/queue/queue_name?useAck=true&lockTimeout=60000",
+    "method": "GET",
+}
+// response
+{
+    "status": 200,
+    "headers": { 
+        "ack-key" : "006841a012d84cada37a5f1ff6a1ee40"
+    },
+    "body": "some data",
 }
 
 // commit ack request
 {
-    url: "/dbq/ack/006841a012d84cada37a5f1ff6a1ee40",
-    method: "POST", // or "DELETE" for cancelling
+    "url": "/dbq/ack/006841a012d84cada37a5f1ff6a1ee40",
+    "method": "POST", // or "DELETE" for cancelling
 }
 ```
 
 
 ## Example 3: Peek
-```json
+```
+// request
 {
-    request: {
-        url: "/dbq/queue/queue_name/peek",
-        method: "GET",
-    }
-    response: {
-        status: 200, // or 204 if null
-        body: "some data",
-    }
+    "url": "/dbq/queue/queue_name/peek",
+    "method": "GET",
+}
+// response
+{
+    "status": 200, // or 204 if null
+    "body": "some data",
 }
 
-// with offset
+
+// request with offset
 {
-    request: {
-        url: "/dbq/queue/queue_name/peek?index=1",
-        method: "GET",
-    }
-    response: {
-        status: 200, // or 204 if null
-        body: "some data",
-    }
+    "url": "/dbq/queue/queue_name/peek?index=1",
+    "method": "GET",
+}
+// response
+{
+    "status": 200, // or 204 if null
+    "body": "some data",
 }
 ```
 
 
 ## Example 4: Clear
-```json
+```
 // clear by types request
 {
-    url: "/dbq/queue/queue_name?type=some_type1,some_type2",
-    method: "DELETE",
+    "url": "/dbq/queue/queue_name?type=some_type1,some_type2",
+    "method": "DELETE",
 }
 
 // clear all
 {
-    url: "/dbq/queue/queue_name",
-    method: "DELETE",
+    "url": "/dbq/queue/queue_name",
+    "method": "DELETE",
 }
 ```
 
