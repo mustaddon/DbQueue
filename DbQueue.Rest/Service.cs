@@ -39,7 +39,7 @@ namespace DbQueue.Rest
                 return;
             }
 
-            context.Response.ContentType = context.Request.ContentType ?? DefaultContentType;
+            context.Response.ContentType = context.Request.ContentType ?? _defaultContentType;
 
             while (await data.MoveNextAsync())
                 await context.Response.Body.WriteAsync(data.Current, 0, data.Current.Length, context.RequestAborted);
@@ -72,7 +72,7 @@ namespace DbQueue.Rest
                 if (useAck == true)
                     context.Response.Headers.Add("ack-key", key);
 
-                context.Response.ContentType = context.Request.ContentType ?? DefaultContentType;
+                context.Response.ContentType = context.Request.ContentType ?? _defaultContentType;
 
                 while (await ack.Data.MoveNextAsync())
                     await context.Response.Body.WriteAsync(ack.Data.Current, 0, ack.Data.Current.Length, context.RequestAborted);
@@ -98,7 +98,7 @@ namespace DbQueue.Rest
 
                 _ = Task.Run(async () =>
                 {
-                    await Task.Delay(Math.Max(5000, lockTimeout ?? 300000));
+                    await Task.Delay(NormTimeout(lockTimeout));
                     if (!autoUnlockCts.Token.IsCancellationRequested && _acks.Remove(key, out var commit))
                         await commit(false);
                 }, autoUnlockCts.Token);
@@ -149,6 +149,11 @@ namespace DbQueue.Rest
             headers["Expires"] = "0";
         }
 
-        private static readonly string DefaultContentType = "text/plain;charset=utf-8";
+        private static int NormTimeout(int? lockTimeout)
+        {
+            return Math.Max(5000, Math.Min(86400000, lockTimeout ?? 300000));
+        }
+
+        private static readonly string _defaultContentType = "text/plain;charset=utf-8";
     }
 }

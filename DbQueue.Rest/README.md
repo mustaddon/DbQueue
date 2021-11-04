@@ -115,7 +115,7 @@ app.Run();
 ```
 
 
-## Example 3: Peek
+## Example 4: Peek
 ```
 // request
 {
@@ -142,7 +142,7 @@ app.Run();
 ```
 
 
-## Example 4: Clear
+## Example 5: Clear
 ```
 // clear by types request
 {
@@ -158,14 +158,14 @@ app.Run();
 ```
 
 
-## Example 5: Stack
+## Example 6: Stack
 ```
 // similar to the above examples,
 // change '/dbq/queue/...' to '/dbq/stack/...'
 ```
 
 
-## Example 6: REST client
+## Example 7: Client usage
 .NET CLI
 ```
 dotnet new console --name "DbqRestClient"
