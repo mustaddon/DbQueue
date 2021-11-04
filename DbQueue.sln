@@ -50,9 +50,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.ConsoleApp.MySql", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.MySql", "Tests\Test.MySql\Test.MySql.csproj", "{C8CAA8E0-89F6-4791-854C-101BFA78A96C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbQueue.Grpc", "DbQueue.Grpc\DbQueue.Grpc.csproj", "{3BC6D18E-294E-47B1-A100-DE3705D56F57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbQueue.Grpc", "DbQueue.Grpc\DbQueue.Grpc.csproj", "{3BC6D18E-294E-47B1-A100-DE3705D56F57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbQueue.Grpc.Client", "DbQueue.Grpc.Client\DbQueue.Grpc.Client.csproj", "{BF791B38-A2FE-46A3-A581-7976EF37AD1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbQueue.Grpc.Client", "DbQueue.Grpc.Client\DbQueue.Grpc.Client.csproj", "{BF791B38-A2FE-46A3-A581-7976EF37AD1C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.GrpcService.MsSql", "Examples\Example.GrpcService.MsSql\Example.GrpcService.MsSql.csproj", "{95D37395-317A-4E7C-B3BA-D7D83D831101}"
 EndProject
@@ -61,6 +61,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.GrpcClient", "Tests\Test.GrpcClient\Test.GrpcClient.csproj", "{4393CA43-AB08-4270-889C-E957C42721F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.GrpcService.MongoDB", "Examples\Example.GrpcService.MongoDB\Example.GrpcService.MongoDB.csproj", "{6C706435-522D-43A8-AC99-5CFFECF46421}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbQueue.Rest", "DbQueue.Rest\DbQueue.Rest.csproj", "{88E752C0-FEF0-447B-9710-19B183D43599}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.RestService.MsSql", "Examples\Example.RestService.MsSql\Example.RestService.MsSql.csproj", "{91A993B5-A3DD-4EC8-A682-28883FB4D156}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.RestService.MongoDB", "Examples\Example.RestService.MongoDB\Example.RestService.MongoDB.csproj", "{FA6C0C7E-5FD4-4470-810D-3FA9DAC02491}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbQueue.Rest.Client", "DbQueue.Rest.Client\DbQueue.Rest.Client.csproj", "{7400C52D-416D-4504-9D1B-92FF1EDDFD09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -146,6 +154,22 @@ Global
 		{6C706435-522D-43A8-AC99-5CFFECF46421}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C706435-522D-43A8-AC99-5CFFECF46421}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C706435-522D-43A8-AC99-5CFFECF46421}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88E752C0-FEF0-447B-9710-19B183D43599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88E752C0-FEF0-447B-9710-19B183D43599}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88E752C0-FEF0-447B-9710-19B183D43599}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88E752C0-FEF0-447B-9710-19B183D43599}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91A993B5-A3DD-4EC8-A682-28883FB4D156}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91A993B5-A3DD-4EC8-A682-28883FB4D156}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91A993B5-A3DD-4EC8-A682-28883FB4D156}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91A993B5-A3DD-4EC8-A682-28883FB4D156}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA6C0C7E-5FD4-4470-810D-3FA9DAC02491}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA6C0C7E-5FD4-4470-810D-3FA9DAC02491}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA6C0C7E-5FD4-4470-810D-3FA9DAC02491}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA6C0C7E-5FD4-4470-810D-3FA9DAC02491}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7400C52D-416D-4504-9D1B-92FF1EDDFD09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7400C52D-416D-4504-9D1B-92FF1EDDFD09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7400C52D-416D-4504-9D1B-92FF1EDDFD09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7400C52D-416D-4504-9D1B-92FF1EDDFD09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -167,6 +191,8 @@ Global
 		{62ABD845-F612-438C-8C7C-02B9A208BD0B} = {78984455-CBFA-4350-B50D-7A79B15DCB32}
 		{4393CA43-AB08-4270-889C-E957C42721F8} = {5C305641-2F50-4D01-88C6-2D7709F3881D}
 		{6C706435-522D-43A8-AC99-5CFFECF46421} = {78984455-CBFA-4350-B50D-7A79B15DCB32}
+		{91A993B5-A3DD-4EC8-A682-28883FB4D156} = {78984455-CBFA-4350-B50D-7A79B15DCB32}
+		{FA6C0C7E-5FD4-4470-810D-3FA9DAC02491} = {78984455-CBFA-4350-B50D-7A79B15DCB32}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0AD0F534-3EAE-4778-BF19-A2A8E4BD98ED}
