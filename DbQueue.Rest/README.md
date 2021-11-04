@@ -102,13 +102,12 @@ app.Run();
 // response
 {
     "status": 200,
-    "headers": { 
-        "ack-key" : "006841a012d84cada37a5f1ff6a1ee40"
-    },
+    "headers": { "ack-key" : "006841a012d84cada37a5f1ff6a1ee40" },
     "body": "some data",
 }
 
-// commit ack request
+
+// request with commit the acknowledgement
 {
     "url": "/dbq/ack/006841a012d84cada37a5f1ff6a1ee40",
     "method": "POST", // or "DELETE" for cancelling
