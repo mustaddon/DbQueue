@@ -70,6 +70,13 @@ app.Run();
     "method": "POST",
     "body": "some data",
 }
+
+// request with several queues 
+{
+    "url": "/dbq/queue/queue_name1,queue_name2,queue_name3",
+    "method": "POST",
+    "body": "some data",
+}
 ```
 
 
