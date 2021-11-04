@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
+﻿using Microsoft.AspNetCore.Routing;
 
-
-namespace Microsoft.Extensions.DependencyInjection
+namespace Microsoft.AspNetCore.Builder
 {
-    public static class GrpcFileStorageExtensions
+    public static class DbqGrpcExtensions
     {
-        public static GrpcServiceEndpointConventionBuilder MapGrpcDbQueue(this IEndpointRouteBuilder builder)
+        public static GrpcServiceEndpointConventionBuilder MapDbqGrpc(this IEndpointRouteBuilder builder)
         {
             return builder.MapGrpcService<DbQueue.Grpc.DbqGrpcService>();
         }

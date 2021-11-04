@@ -37,7 +37,7 @@ builder.Services.AddDbqMongo((services, options) =>
 var app = builder.Build();
 
 // map gRPC service to the endpoint
-app.MapGrpcDbQueue();
+app.MapDbqGrpc();
 
 app.Run();
 ```
