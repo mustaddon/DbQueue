@@ -39,13 +39,13 @@ namespace DbQueue.Rest
                 return;
             }
 
-            context.Response.ContentType = context.Request.ContentType ?? "text/plain;charset=utf-8";
+            context.Response.ContentType = context.Request.ContentType ?? DefaultContentType;
 
             while (await data.MoveNextAsync())
                 await context.Response.Body.WriteAsync(data.Current, 0, data.Current.Length, context.RequestAborted);
         }
 
-        public static async Task Pop(HttpContext context, bool stackMode, string queue, bool? useAck, int? ackDeadline)
+        public static async Task Pop(HttpContext context, bool stackMode, string queue, bool? useAck, int? lockTimeout)
         {
             context.Response.Headers.AddNoCache();
 
@@ -68,8 +68,11 @@ namespace DbQueue.Rest
             try
             {
                 var key = Guid.NewGuid().ToString("n");
-                context.Response.Headers.Add("ack-key", key);
-                context.Response.ContentType = context.Request.ContentType ?? "text/plain;charset=utf-8";
+
+                if (useAck == true)
+                    context.Response.Headers.Add("ack-key", key);
+
+                context.Response.ContentType = context.Request.ContentType ?? DefaultContentType;
 
                 while (await ack.Data.MoveNextAsync())
                     await context.Response.Body.WriteAsync(ack.Data.Current, 0, ack.Data.Current.Length, context.RequestAborted);
@@ -81,32 +84,24 @@ namespace DbQueue.Rest
                     return;
                 }
 
-                var deadlineCts = new CancellationTokenSource();
+                var autoUnlockCts = new CancellationTokenSource();
 
-                var added = _acks.TryAdd(key, async commit =>
+                if (!_acks.TryAdd(key, async commit =>
                 {
-                    deadlineCts.Cancel();
-
-                    try
+                    using (extraScope)
+                    using (ack)
                     {
-                        if (commit)
-                            await ack.Commit();
-                        else
-                            await ack.DisposeAsync();
+                        autoUnlockCts.Cancel();
+                        if (commit) await ack.Commit();
                     }
-                    finally
-                    {
-                        extraScope.Dispose();
-                    }
-                });
+                })) throw new Exception("failed to add acknowledgement");
 
                 _ = Task.Run(async () =>
                 {
-                    await Task.Delay(Math.Max(5000, ackDeadline ?? 300000));
-
-                    if (!deadlineCts.Token.IsCancellationRequested && _acks.Remove(key, out var commit))
+                    await Task.Delay(Math.Max(5000, lockTimeout ?? 300000));
+                    if (!autoUnlockCts.Token.IsCancellationRequested && _acks.Remove(key, out var commit))
                         await commit(false);
-                }, deadlineCts.Token);
+                }, autoUnlockCts.Token);
             }
             catch
             {
@@ -141,7 +136,7 @@ namespace DbQueue.Rest
 
             return context.RequestServices.GetRequiredService<IDbQueue>().Clear(
                 queue: queue,
-                types: string.IsNullOrEmpty(type) ? null 
+                types: string.IsNullOrEmpty(type) ? null
                     : type.Split(separator ?? ",", StringSplitOptions.RemoveEmptyEntries),
                 cancellationToken: context.RequestAborted);
         }
@@ -153,5 +148,7 @@ namespace DbQueue.Rest
             headers["Pragma"] = "no-cache";
             headers["Expires"] = "0";
         }
+
+        private static readonly string DefaultContentType = "text/plain;charset=utf-8";
     }
 }

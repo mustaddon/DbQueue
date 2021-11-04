@@ -11,8 +11,8 @@ namespace DbQueue.Rest.Controllers
             => Service.Push(HttpContext, name, type, availableAfter, removeAfter, separator);
 
         [HttpGet("{name}")]
-        public virtual Task Pop(string name, [FromQuery] bool? useAck, [FromQuery] int? ackDeadline)
-            => Service.Pop(HttpContext, false, name, useAck, ackDeadline);
+        public virtual Task Pop(string name, [FromQuery] bool? useAck, [FromQuery] int? lockTimeout)
+            => Service.Pop(HttpContext, false, name, useAck, lockTimeout);
 
         [HttpGet("{name}/[action]")]
         public virtual Task Peek(string name, [FromQuery] int? index)

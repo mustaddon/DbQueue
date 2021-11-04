@@ -10,5 +10,7 @@ namespace DbQueue
         public Dictionary<string, IEnumerable<string>> DefaultRequestHeaders { get; set; } = new();
 
         public bool StackMode { get; set; }
+
+        public int LockTimeout { get; set; } = 300000;
     }
 }

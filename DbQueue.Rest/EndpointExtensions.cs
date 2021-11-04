@@ -18,10 +18,10 @@ namespace Microsoft.AspNetCore.Builder
                     => Service.Push(context, name, type, availableAfter, removeAfter, separator)),
                 
                 // pop
-                builder.MapGet("dbq/queue/{name:required}", (HttpContext context, string name, bool? useAck, int? ackDeadline)
-                    => Service.Pop(context, false, name, useAck, ackDeadline)),
-                builder.MapGet("dbq/stack/{name:required}", (HttpContext context, string name, bool? useAck, int? ackDeadline)
-                    => Service.Pop(context, true, name, useAck, ackDeadline)),
+                builder.MapGet("dbq/queue/{name:required}", (HttpContext context, string name, bool? useAck, int? lockTimeout)
+                    => Service.Pop(context, false, name, useAck, lockTimeout)),
+                builder.MapGet("dbq/stack/{name:required}", (HttpContext context, string name, bool? useAck, int? lockTimeout)
+                    => Service.Pop(context, true, name, useAck, lockTimeout)),
 
                 // peek
                 builder.MapGet("dbq/queue/{name:required}/peek", (HttpContext context, string name, int? index)

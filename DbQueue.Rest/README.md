@@ -60,7 +60,7 @@ Program.cs:
 using DbQueue;
 
 // create client
-using var queue = new DbqRestClient("https://localhost:7271");
+using var queue = new DbqRestClient("https://localhost:7273");
 var queueName = "examples";
 
 // push
