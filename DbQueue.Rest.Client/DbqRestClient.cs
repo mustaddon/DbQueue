@@ -93,10 +93,10 @@ namespace DbQueue
                 return null;
 
             response.EnsureSuccessStatusCode();
-            
+
             var data = GetEnumerator(response, cancellationToken);
             await data.MoveNextAsync(); // start enumerate for connect dispose
-            
+
             return data;
         }
 
@@ -129,7 +129,7 @@ namespace DbQueue
                 dispose: async () =>
                 {
                     if (!commited)
-                        await Commit(ackKey, false, cancellationToken);
+                        await Commit(ackKey, false);
 
                     response.Dispose();
                 });

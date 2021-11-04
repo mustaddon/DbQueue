@@ -22,6 +22,11 @@
 * [Client](https://github.com/mustaddon/DbQueue/tree/main/DbQueue.Grpc.Client/)
 
 
+## REST endpoint
+* [Service](https://github.com/mustaddon/DbQueue/tree/main/DbQueue.Rest/)
+* [Client](https://github.com/mustaddon/DbQueue/tree/main/DbQueue.Rest.Client/)
+
+
 ## Example 1: Queue with MsSQL via EFCore
 SQL
 ```sql
