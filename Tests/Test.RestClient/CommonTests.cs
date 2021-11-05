@@ -23,7 +23,7 @@ namespace Test.RestClient
         public async Task TestUrlEncode()
         {
             var queueNames = Enumerable.Range(1, 10)
-                .Select(i => GetQueueName($"{nameof(TestUrlEncode)}_{i}/test,тест"));
+                .Select(i => GetQueueName($"{nameof(TestUrlEncode)}_{i}/?&#/test,тест"));
 
             foreach (var queueName in queueNames)
                 await _dbq.Clear(queueName);
