@@ -33,16 +33,16 @@ builder.Services.AddDbqMongo((services, options) =>
     options.BlobStorage.PathBuilder = (filename) => Path.GetFullPath($@"_blob\{DateTime.Now:yyyy\\MM\\dd}\{filename}");
 });
 
-//// for net5.0 add via controllers
+//// net5.0: add REST controllers
 //builder.Services.AddControllers().AddDbqRest();
 
 var app = builder.Build();
 
-// map REST service to the endpoint
-app.MapDbqRest();
-
-//// for net5.0 map controllers
+//// net5.0: map controllers
 //app.MapControllers();
+
+// net6.0: map REST service to the endpoint
+app.MapDbqRest();
 
 app.Run();
 ```
