@@ -66,7 +66,7 @@ app.Run();
 
 // request with delays
 {
-    "url": "/dbq/queue/queue_name?removeAfter=2021-11-01T00:00:00Z&removeAfter=2021-12-01T00:00:00Z",
+    "url": "/dbq/queue/queue_name?availableAfter=2021-11-01T00:00:00Z&removeAfter=2021-12-01T00:00:00Z",
     "method": "POST",
     "body": "some data",
 }
