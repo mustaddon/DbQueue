@@ -62,7 +62,7 @@ namespace DbQueue
         public async Task Push(IEnumerable<string> queues, IAsyncEnumerator<byte[]> data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
             var queue = Join(queues);
-            var url = @$"dbq/{QueueStack()}/{queue?.str}?{QueryArgs(new()
+            var url = @$"dbq/{QueueStack()}/{Encode(queue?.str)}?{QueryArgs(new()
             {
                 { "type", type },
                 { "availableAfter", availableAfter },
@@ -219,7 +219,7 @@ namespace DbQueue
             if (values?.Any() != true)
                 return null;
 
-            var separator = new[] { ",", ";", "|", "-", "." }.FirstOrDefault(x => !values.Any(xx => xx.Contains(x)))
+            var separator = new[] { ",", ";", "|", "-", "_", ".", " " }.FirstOrDefault(x => !values.Any(xx => xx.Contains(x)))
                 ?? throw new ArgumentException($"Could not find correct separator for enumerated values: {string.Join(",", values)}");
 
             return (separator, string.Join(separator, values));
