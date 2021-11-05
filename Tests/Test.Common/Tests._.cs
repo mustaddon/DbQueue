@@ -17,7 +17,7 @@ namespace Test.Common
         readonly Func<IDbqBoth> _dbqFactory;
         readonly IDbqBoth _dbq;
 
-        private string GetQueueName(string val = null) => $"test_{(_dbq.StackMode ? "stack" : "queue")}_{val ?? default}";
+        protected string GetQueueName(string val = null) => $"test_{(_dbq.StackMode ? "stack" : "queue")}_{val ?? default}";
 
 
 

@@ -6,7 +6,7 @@ using Test.Common;
 namespace Test.RestClient
 {
     [TestClass()]
-    public class StackTests : Tests
+    public class StackTests : CommonTests
     {
         public StackTests() : base(() => App.Instance.Value.Services.GetService<IDbStack>() as IDbqBoth)
         {

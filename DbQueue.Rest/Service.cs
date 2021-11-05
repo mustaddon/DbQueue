@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
+using System.Web;
 
 namespace DbQueue.Rest
 {
@@ -11,9 +12,9 @@ namespace DbQueue.Rest
         public static Task Push(HttpContext context, string queue, string? type, DateTime? availableAfter, DateTime? removeAfter, string? separator)
         {
             context.Response.Headers.AddNoCache();
-
+            
             return context.RequestServices.GetRequiredService<IDbQueue>().Push(
-                queues: queue.Split(separator ?? ",", StringSplitOptions.RemoveEmptyEntries),
+                queues: HttpUtility.UrlDecode(queue).Split(separator ?? ",", StringSplitOptions.RemoveEmptyEntries),
                 data: context.Request.Body,
                 type: string.IsNullOrEmpty(type) ? null : type,
                 availableAfter: availableAfter,
@@ -29,7 +30,7 @@ namespace DbQueue.Rest
                 : context.RequestServices.GetRequiredService<IDbQueue>();
 
             var data = await dbq.Peek(
-                queue: queue,
+                queue: HttpUtility.UrlDecode(queue),
                 index: Math.Max(0, index ?? 0),
                 cancellationToken: context.RequestAborted);
 
@@ -55,7 +56,7 @@ namespace DbQueue.Rest
                 : extraScope.ServiceProvider.GetRequiredService<IDbQueue>();
 
             var ack = await dbq.Pop(
-                queue: queue,
+                queue: HttpUtility.UrlDecode(queue),
                 cancellationToken: context.RequestAborted);
 
             if (ack == null)
@@ -126,7 +127,7 @@ namespace DbQueue.Rest
             context.Response.Headers.AddNoCache();
 
             return context.RequestServices.GetRequiredService<IDbQueue>().Count(
-                queue: queue,
+                queue: HttpUtility.UrlDecode(queue),
                 cancellationToken: context.RequestAborted);
         }
 
@@ -135,7 +136,7 @@ namespace DbQueue.Rest
             context.Response.Headers.AddNoCache();
 
             return context.RequestServices.GetRequiredService<IDbQueue>().Clear(
-                queue: queue,
+                queue: HttpUtility.UrlDecode(queue),
                 types: string.IsNullOrEmpty(type) ? null
                     : type.Split(separator ?? ",", StringSplitOptions.RemoveEmptyEntries),
                 cancellationToken: context.RequestAborted);
