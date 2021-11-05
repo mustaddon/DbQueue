@@ -41,7 +41,7 @@ var app = builder.Build();
 //// net5.0: map controllers
 //app.MapControllers();
 
-// net6.0: map REST service to the endpoint
+// net6.0: map REST service
 app.MapDbqRest();
 
 app.Run();
@@ -144,7 +144,7 @@ app.Run();
 
 ## Example 5: Clear
 ```
-// clear by types request
+// clear by type
 {
     "url": "/dbq/queue/queue_name?type=some_type1,some_type2",
     "method": "DELETE",
