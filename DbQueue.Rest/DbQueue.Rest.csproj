@@ -52,22 +52,22 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
-      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0-rc.2.21480.10\ref\net6.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0\ref\net6.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNetCore.Http.Features">
-      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0-rc.2.21480.10\ref\net6.0\Microsoft.AspNetCore.Http.Features.dll</HintPath>
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0\ref\net6.0\Microsoft.AspNetCore.Http.Features.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNetCore.Mvc.Core">
-      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0-rc.2.21480.10\ref\net6.0\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0\ref\net6.0\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNetCore.Routing">
-      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0-rc.2.21480.10\ref\net6.0\Microsoft.AspNetCore.Routing.dll</HintPath>
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0\ref\net6.0\Microsoft.AspNetCore.Routing.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0-rc.2.21480.10\ref\net6.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0\ref\net6.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Primitives">
-      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0-rc.2.21480.10\ref\net6.0\Microsoft.Extensions.Primitives.dll</HintPath>
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.0\ref\net6.0\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
   </ItemGroup>  
 
