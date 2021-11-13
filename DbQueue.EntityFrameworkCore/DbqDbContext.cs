@@ -23,8 +23,8 @@ namespace DbQueue.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EfcItem>().Property(p => p.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<EfcItem>().Property(s => s.LockId).IsConcurrencyToken();
-
+            modelBuilder.Entity<EfcItem>().Property(p => p.LockId).IsConcurrencyToken();
+            
             base.OnModelCreating(modelBuilder);
         }
 

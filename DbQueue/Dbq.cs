@@ -115,7 +115,7 @@ namespace DbQueue
         {
             var item = await _database.Get(queue, StackMode, index, withLock, cancellationToken);
 
-            while (item != null && item.RemoveAfter < DateTime.UtcNow)
+            while (item != null && item.RemoveAfter?.ToUniversalTime() < DateTime.UtcNow)
             {
                 await Remove(item, cancellationToken);
                 item = await _database.Get(queue, StackMode, index, withLock, cancellationToken);
