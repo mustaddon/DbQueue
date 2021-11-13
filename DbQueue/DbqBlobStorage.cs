@@ -20,7 +20,7 @@ namespace DbQueue
         {
             var path = _settings.PathBuilder(Guid.NewGuid().ToString("n"));
 
-            (new FileInfo(path)).Directory.Create();
+            (new FileInfo(path)).Directory?.Create();
 
             using var file = File.Create(path);
 

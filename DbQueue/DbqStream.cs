@@ -31,7 +31,7 @@ namespace DbQueue
         {
             if (_disposed) return;
             _enumerator.DisposeAsync().AsTask().Wait();
-            OnDispose?.Invoke(this, null);
+            OnDispose?.Invoke(this, EventArgs.Empty);
             base.Dispose(disposing);
             _disposed = true;
         }
@@ -66,7 +66,7 @@ namespace DbQueue
 
                 if (result == 0 && _canRead)
                 {
-                    OnComplete?.Invoke(this, null);
+                    OnComplete?.Invoke(this, EventArgs.Empty);
                     _canRead = false;
                 }
 

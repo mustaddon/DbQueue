@@ -25,7 +25,7 @@ namespace DbQueue
         public DateTime? RemoveAfter { get; set; }
 
         public override int GetHashCode() => Id.GetHashCode();
-        public override bool Equals(object obj) => string.Equals(Id, (obj as DbqDatabaseItem)?.Id);
+        public override bool Equals(object? obj) => string.Equals(Id, (obj as DbqDatabaseItem)?.Id);
 
         private static readonly byte[] BytesEmpty = new byte[0];
     }

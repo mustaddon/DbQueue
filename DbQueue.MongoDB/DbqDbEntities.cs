@@ -19,7 +19,7 @@ namespace DbQueue.MongoDB
         public long? LockId { get; set; }
 
         public override int GetHashCode() => Id.GetHashCode();
-        public override bool Equals(object obj) => Id == (obj as MongoItem)?.Id;
+        public override bool Equals(object? obj) => Id == (obj as MongoItem)?.Id;
 
         private static readonly byte[] BytesEmpty = new byte[0];
     }

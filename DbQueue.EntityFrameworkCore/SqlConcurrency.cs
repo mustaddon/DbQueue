@@ -4,9 +4,9 @@ namespace DbQueue.EntityFrameworkCore
 {
     internal class SqlConcurrency
     {
-        public static string? GetAndLock(string providerName)
+        public static string? GetAndLock(string? providerName)
         {
-            return GetAndLockDict.TryGetValue(providerName, out var sql) ? sql : null;
+            return providerName != null && GetAndLockDict.TryGetValue(providerName, out var sql) ? sql : null;
         }
 
         static readonly Dictionary<string, string> GetAndLockDict = new()

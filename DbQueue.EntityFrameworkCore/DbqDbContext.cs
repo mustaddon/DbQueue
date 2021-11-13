@@ -44,7 +44,7 @@ namespace DbQueue.EntityFrameworkCore
 
 
         public override int GetHashCode() => Id.GetHashCode();
-        public override bool Equals(object obj) => Id == (obj as EfcItem)?.Id;
+        public override bool Equals(object? obj) => Id == (obj as EfcItem)?.Id;
 
         private static readonly byte[] BytesEmpty = new byte[0];
     }
