@@ -38,8 +38,8 @@ namespace DbQueue.EntityFrameworkCore
         public bool IsBlob { get; set; }
         public long Hash { get; set; }
         public string? Type { get; set; }
-        public DateTime? AvailableAfter { get; set; }
-        public DateTime? RemoveAfter { get; set; }
+        public long? AvailableAfter { get; set; }
+        public long? RemoveAfter { get; set; }
         public long? LockId { get; set; }
 
 

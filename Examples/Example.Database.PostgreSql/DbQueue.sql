@@ -6,8 +6,8 @@ CREATE TABLE "DbQueue"
     "Hash" BIGINT NOT NULL,
     "IsBlob" BOOLEAN NOT NULL,
     "Type" VARCHAR(255) NULL,
-    "AvailableAfter" TIMESTAMP NULL,
-    "RemoveAfter" TIMESTAMP NULL,
+    "AvailableAfter" BIGINT NULL,
+    "RemoveAfter" BIGINT NULL,
     "LockId" BIGINT NULL
 );
 

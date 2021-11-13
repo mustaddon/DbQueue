@@ -34,8 +34,8 @@ namespace DbQueue.EntityFrameworkCore
                     Data = data,
                     Hash = GetHash(data),
                     Type = type,
-                    AvailableAfter = availableAfter?.ToUniversalTime(),
-                    RemoveAfter = removeAfter?.ToUniversalTime(),
+                    AvailableAfter = availableAfter?.ToUniversalTime().Ticks,
+                    RemoveAfter = removeAfter?.ToUniversalTime().Ticks,
                 }, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -58,7 +58,7 @@ namespace DbQueue.EntityFrameworkCore
 
             if (concurrentGetAndLock != null)
                 return Map((await _context.DbQueue
-                    .FromSqlRaw(concurrentGetAndLock, queue, desc, index, lockId, lockLimit, DateTime.UtcNow)
+                    .FromSqlRaw(concurrentGetAndLock, queue, desc, index, lockId, lockLimit, DateTime.UtcNow.Ticks)
                     .AsNoTracking()
                     .ToListAsync(cancellationToken))
                     .SingleOrDefault());
@@ -88,7 +88,8 @@ namespace DbQueue.EntityFrameworkCore
 
         private static Expression<Func<EfcItem, bool>> Available(string queue)
         {
-            return x => x.Queue == queue && (x.AvailableAfter == null || x.AvailableAfter < DateTime.UtcNow);
+            var now = DateTime.UtcNow.Ticks;
+            return x => x.Queue == queue && (x.AvailableAfter == null || x.AvailableAfter < now);
         }
 
         public async Task Unlock(string queue, long lockid, CancellationToken cancellationToken = default)
@@ -109,8 +110,9 @@ namespace DbQueue.EntityFrameworkCore
 
         public Task<long> Count(string queue, CancellationToken cancellationToken = default)
         {
+            var now = DateTime.UtcNow.Ticks;
             return _context.DbQueue
-                .Where(x => x.Queue == queue && (x.RemoveAfter == null || x.RemoveAfter > DateTime.UtcNow))
+                .Where(x => x.Queue == queue && (x.RemoveAfter == null || x.RemoveAfter > now))
                 .LongCountAsync(cancellationToken);
         }
 
@@ -173,7 +175,8 @@ namespace DbQueue.EntityFrameworkCore
                 Data = entity.Data,
                 IsBlob = entity.IsBlob,
                 LockId = entity.LockId,
-                RemoveAfter = entity.RemoveAfter,
+                RemoveAfter = !entity.RemoveAfter.HasValue ? null
+                    : new DateTime(entity.RemoveAfter.Value, DateTimeKind.Utc),
             };
         }
 
