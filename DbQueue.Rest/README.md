@@ -1,5 +1,5 @@
 # DbQueue.Rest [![NuGet version](https://badge.fury.io/nu/DbQueue.Rest.svg)](http://badge.fury.io/nu/DbQueue.Rest)
-.NET DbQueue REST service
+DbQueue REST service
 
 
 ## Features

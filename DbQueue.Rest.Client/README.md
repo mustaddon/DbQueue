@@ -1,5 +1,5 @@
 # DbQueue.Rest.Client [![NuGet version](https://badge.fury.io/nu/DbQueue.Rest.Client.svg)](http://badge.fury.io/nu/DbQueue.Rest.Client)
-.NET DbQueue REST client
+DbQueue REST client
 
 
 ## Example: Usage

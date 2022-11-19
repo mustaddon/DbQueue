@@ -1,5 +1,5 @@
 # DbQueue.Grpc [![NuGet version](https://badge.fury.io/nu/DbQueue.Grpc.svg)](http://badge.fury.io/nu/DbQueue.Grpc)
-.NET DbQueue gRPC service
+DbQueue gRPC service
 
 
 ## Features

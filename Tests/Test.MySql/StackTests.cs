@@ -8,7 +8,7 @@ namespace Test.EFCore
     [TestClass()]
     public class StackTests : Tests
     {
-        public StackTests() : base(() => App.Official.Value.Services.GetService<IDbStack>() as IDbqBoth)
+        public StackTests() : base(() => App.Pomelo.Value.Services.GetService<IDbStack>() as IDbqBoth)
         {
         }
     }

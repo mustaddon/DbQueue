@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
-  	<TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+  	<TargetFrameworks>net5.0;net6.0;net7.0</TargetFrameworks>
   	<LangVersion>latest</LangVersion>
   	<Nullable>enable</Nullable>
   	<ImplicitUsings>enable</ImplicitUsings>
   	<SignAssembly>True</SignAssembly>
   	<AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
-  	<AssemblyVersion>1.0.2</AssemblyVersion>
-  	<FileVersion>1.0.2</FileVersion>
-  	<Version>1.0.2</Version>
+  	<AssemblyVersion>1.0.8</AssemblyVersion>
+  	<FileVersion>1.0.8</FileVersion>
+  	<Version>1.0.8</Version>
   	<Company></Company>
   	<Authors>Leonid Salavatov</Authors>
-  	<Copyright>Leonid Salavatov 2021</Copyright>
+  	<Copyright>Leonid Salavatov 2022</Copyright>
   	<PackageId>DbQueue.Grpc</PackageId>
   	<Product>DbQueue.Grpc</Product>
   	<Title>DbQueue.Grpc</Title>
   	<Description>.NET DbQueue gRPC service</Description>
-  	<PackageTags>grpc aspnetcore microservice database concurrent queue dbqueue stack dbstack dbq sql nosql dotnet</PackageTags>
+  	<PackageTags>grpc aspnetcore microservice database concurrent queue dbqueue stack dbstack dbq sql nosql</PackageTags>
   	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   	<PackageProjectUrl>https://github.com/mustaddon/DbQueue</PackageProjectUrl>
   	<RepositoryUrl>https://github.com/mustaddon/DbQueue</RepositoryUrl>
@@ -29,11 +29,11 @@
   </PropertyGroup>
   
   <ItemGroup>
-  	<PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
+  	<ProjectReference Include="..\DbQueue\DbQueue.csproj" />
   </ItemGroup>
   
   <ItemGroup>
-  	<ProjectReference Include="..\DbQueue\DbQueue.csproj" />
+  	<PackageReference Include="Grpc.AspNetCore" Version="2.50.0" />
   </ItemGroup>
   
   <ItemGroup>

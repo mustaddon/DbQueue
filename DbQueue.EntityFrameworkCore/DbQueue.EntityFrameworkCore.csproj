@@ -1,22 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net6.0;net7.0</TargetFrameworks>
 	<LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
-	<AssemblyVersion>1.0.7</AssemblyVersion>
-    <FileVersion>1.0.7</FileVersion>
-    <Version>1.0.7</Version>
+	<AssemblyVersion>1.0.8</AssemblyVersion>
+    <FileVersion>1.0.8</FileVersion>
+    <Version>1.0.8</Version>
 	<Company></Company>
     <Authors>Leonid Salavatov</Authors>
-    <Copyright>Leonid Salavatov 2021</Copyright>
+    <Copyright>Leonid Salavatov 2022</Copyright>
     <PackageId>DbQueue.EntityFrameworkCore</PackageId>
     <Product>DbQueue.EntityFrameworkCore</Product>
     <Title>DbQueue.EntityFrameworkCore</Title>
     <Description>.NET DbQueue with EntityFrameworkCore</Description>
-    <PackageTags>database concurrent queue dbqueue stack dbstack entityframework efcore dbq sql dotnet</PackageTags>
+    <PackageTags>database concurrent queue dbqueue stack dbstack entityframework efcore dbq sql</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/mustaddon/DbQueue</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mustaddon/DbQueue</RepositoryUrl>
@@ -27,20 +27,22 @@
     <PackageReleaseNotes></PackageReleaseNotes>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.0" />
-  </ItemGroup>
-	
-  <ItemGroup Condition="'$(TargetFramework)' != 'net6.0'">
-	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.12" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.12" />
+  <ItemGroup>
+    <ProjectReference Include="..\DbQueue\DbQueue.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DbQueue\DbQueue.csproj" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+  	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.12" />
+  	<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.12" />
+  </ItemGroup>
+	
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.1'">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0" />
   </ItemGroup>
 
 </Project>

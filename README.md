@@ -1,5 +1,5 @@
 # DbQueue [![NuGet version](https://badge.fury.io/nu/DbQueue.svg)](http://badge.fury.io/nu/DbQueue)
-.NET Database concurrent Queue/Stack
+Database concurrent Queue/Stack
 
 
 ## Features

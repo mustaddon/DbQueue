@@ -8,7 +8,7 @@ namespace Test.EFCore
     [TestClass()]
     public class QueueTests : Tests
     {
-        public QueueTests() : base(() => App.Official.Value.Services.GetService<IDbQueue>() as IDbqBoth)
+        public QueueTests() : base(() => App.Pomelo.Value.Services.GetService<IDbQueue>() as IDbqBoth)
         {
         }
     }

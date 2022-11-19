@@ -1,5 +1,5 @@
 # DbQueue.Grpc.Client [![NuGet version](https://badge.fury.io/nu/DbQueue.Grpc.Client.svg)](http://badge.fury.io/nu/DbQueue.Grpc.Client)
-.NET DbQueue gRPC client
+DbQueue gRPC client
 
 
 ## Example: Usage

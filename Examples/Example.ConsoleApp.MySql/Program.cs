@@ -12,8 +12,10 @@ var app = Host.CreateDefaultBuilder(args)
         // add services to the container
         services.AddDbqEfc((sp, options) =>
         {
+            var connectionString = hostContext.Configuration.GetConnectionString("dbq");
+
             // add database provider 
-            options.Database.ContextConfigurator = (db) => db.UseMySQL(hostContext.Configuration.GetConnectionString("dbq"));
+            options.Database.ContextConfigurator = (db) => db.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 
             // add blob's path construction algorithm 
             options.BlobStorage.PathBuilder = (filename) => Path.GetFullPath($@"_blob\{DateTime.Now:yyyy\\MM\\dd}\{filename}");
