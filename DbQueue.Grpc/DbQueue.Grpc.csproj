@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
-  	<TargetFrameworks>net5.0;net6.0;net7.0</TargetFrameworks>
+  	<TargetFrameworks>net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
   	<LangVersion>latest</LangVersion>
   	<Nullable>enable</Nullable>
   	<ImplicitUsings>enable</ImplicitUsings>
   	<SignAssembly>True</SignAssembly>
   	<AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
-  	<AssemblyVersion>1.0.8</AssemblyVersion>
-  	<FileVersion>1.0.8</FileVersion>
-  	<Version>1.0.8</Version>
+  	<AssemblyVersion>1.1.0</AssemblyVersion>
+  	<FileVersion>1.1.0</FileVersion>
+  	<Version>1.1.0</Version>
   	<Company></Company>
   	<Authors>Leonid Salavatov</Authors>
-  	<Copyright>Leonid Salavatov 2022</Copyright>
+  	<Copyright>Leonid Salavatov 2024</Copyright>
   	<PackageId>DbQueue.Grpc</PackageId>
   	<Product>DbQueue.Grpc</Product>
   	<Title>DbQueue.Grpc</Title>
@@ -32,8 +32,12 @@
   	<ProjectReference Include="..\DbQueue\DbQueue.csproj" />
   </ItemGroup>
   
-  <ItemGroup>
-  	<PackageReference Include="Grpc.AspNetCore" Version="2.50.0" />
+  <ItemGroup Condition="'$(TargetFramework)' != 'net5.0'">
+  	<PackageReference Include="Grpc.AspNetCore" Version="2.60.0" />
+  </ItemGroup>
+	
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+	<PackageReference Include="Grpc.AspNetCore" Version="2.56.0" />
   </ItemGroup>
   
   <ItemGroup>

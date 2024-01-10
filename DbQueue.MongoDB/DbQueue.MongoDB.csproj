@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net6.0;net7.0;net8.0</TargetFrameworks>
 	<LangVersion>latest</LangVersion>
 	<Nullable>enable</Nullable>
 	<SignAssembly>True</SignAssembly>
 	<AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
-	<AssemblyVersion>1.0.8</AssemblyVersion>
-	<FileVersion>1.0.8</FileVersion>
-    <Version>1.0.8</Version>
+	<AssemblyVersion>1.1.0</AssemblyVersion>
+	<FileVersion>1.1.0</FileVersion>
+    <Version>1.1.0</Version>
 	<Company></Company>
 	<Authors>Leonid Salavatov</Authors>
-	<Copyright>Leonid Salavatov 2022</Copyright>
+	<Copyright>Leonid Salavatov 2024</Copyright>
 	<PackageId>DbQueue.MongoDB</PackageId>
 	<Product>DbQueue.MongoDB</Product>
 	<Title>DbQueue.MongoDB</Title>
@@ -32,8 +32,8 @@
   </ItemGroup>
 	
   <ItemGroup>
-	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
   </ItemGroup>
 
 </Project>
