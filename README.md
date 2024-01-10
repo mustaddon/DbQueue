@@ -1,4 +1,4 @@
-# DbQueue [![NuGet version](https://badge.fury.io/nu/DbQueue.svg)](http://badge.fury.io/nu/DbQueue)
+# DbQueue [![NuGet version](https://badge.fury.io/nu/DbQueue.svg?)](http://badge.fury.io/nu/DbQueue)
 Database concurrent Queue/Stack
 
 
