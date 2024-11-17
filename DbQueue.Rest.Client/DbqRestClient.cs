@@ -73,7 +73,7 @@ namespace DbQueue
             using var ms = new MemoryStream();
 
             while (await data.MoveNextAsync())
-                ms.Write(data.Current);
+                ms.Write(data.Current, 0, data.Current.Length);
 
             ms.Position = 0;
 

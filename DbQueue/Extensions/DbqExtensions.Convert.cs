@@ -38,7 +38,7 @@ namespace DbQueue
             var ms = new MemoryStream();
 
             while (await enumerator.MoveNextAsync())
-                ms.Write(enumerator.Current);
+                ms.Write(enumerator.Current, 0, enumerator.Current.Length);
 
             return ms.ToArray();
         }

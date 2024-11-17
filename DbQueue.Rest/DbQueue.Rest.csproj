@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-  	<TargetFrameworks>net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
+  	<TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
   	<LangVersion>latest</LangVersion>
   	<Nullable>enable</Nullable>
   	<ImplicitUsings>enable</ImplicitUsings>
     <SignAssembly>True</SignAssembly>
   	<AssemblyOriginatorKeyFile>..\DbQueue.snk</AssemblyOriginatorKeyFile>
-  	<AssemblyVersion>1.1.0</AssemblyVersion>
-  	<FileVersion>1.1.0</FileVersion>
-  	<Version>1.1.0</Version>
+  	<AssemblyVersion>1.1.1</AssemblyVersion>
+  	<FileVersion>1.1.1</FileVersion>
+  	<Version>1.1.1</Version>
   	<Company></Company>
   	<Authors>Leonid Salavatov</Authors>
   	<Copyright>Leonid Salavatov 2024</Copyright>
@@ -33,10 +33,10 @@
   </ItemGroup>
 
   <PropertyGroup>
-  	<AspNetCoreRef Condition="'$(TargetFramework)' == 'net5.0'">C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\5.0.0\ref\net5.0</AspNetCoreRef>
-  	<AspNetCoreRef Condition="'$(TargetFramework)' == 'net6.0'">C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.25\ref\net6.0</AspNetCoreRef>
-  	<AspNetCoreRef Condition="'$(TargetFramework)' == 'net7.0'">C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\7.0.14\ref\net7.0</AspNetCoreRef>
-  	<AspNetCoreRef Condition="'$(TargetFramework)' == 'net8.0'">C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\8.0.0\ref\net8.0</AspNetCoreRef>
+  	<AspNetCoreRef Condition="'$(TargetFramework)' == 'net6.0'">C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.36\ref\net6.0</AspNetCoreRef>
+  	<AspNetCoreRef Condition="'$(TargetFramework)' == 'net7.0'">C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\7.0.20\ref\net7.0</AspNetCoreRef>
+  	<AspNetCoreRef Condition="'$(TargetFramework)' == 'net8.0'">C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\8.0.11\ref\net8.0</AspNetCoreRef>
+  	<AspNetCoreRef Condition="'$(TargetFramework)' == 'net9.0'">C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\9.0.0\ref\net9.0</AspNetCoreRef>
   </PropertyGroup>
 
   <ItemGroup>

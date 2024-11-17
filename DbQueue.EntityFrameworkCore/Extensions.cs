@@ -1,6 +1,5 @@
 ﻿using DbQueue;
 using DbQueue.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
@@ -13,20 +12,16 @@ namespace Microsoft.Extensions.DependencyInjection
             Action<IServiceProvider, DbqEfcOptions> optionsBuilder,
             ServiceLifetime lifetime = ServiceLifetime.Scoped)
         {
-            services.Add(new ServiceDescriptor(typeof(DbqEfcOptions), x =>
+            services.AddTransient(x =>
             {
                 var options = new DbqEfcOptions();
                 optionsBuilder?.Invoke(x, options);
-                return options;
-            }, lifetime));
 
-            services.AddTransient(x => x.GetRequiredService<DbqEfcOptions>().Database);
-            services.AddTransient(x => x.GetRequiredService<DbqEfcOptions>().BlobStorage);
-            services.AddTransient(x => x.GetRequiredService<DbqEfcOptions>().Queue);
-            services.AddTransient<Dbq>();
-
-            services.TryAdd(new ServiceDescriptor(typeof(IDbqDatabase), typeof(DbqDatabase), lifetime));
-            services.TryAdd(new ServiceDescriptor(typeof(IDbqBlobStorage), typeof(DbqBlobStorage), lifetime));
+                return new Dbq(
+                    new DbqDatabase(options.Database),
+                    new DbqBlobStorage(options.BlobStorage),
+                    options.Queue);
+            });
 
             services.Add(new ServiceDescriptor(typeof(IDbQueue), x =>
             {

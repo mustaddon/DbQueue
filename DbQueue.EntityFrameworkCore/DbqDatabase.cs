@@ -15,7 +15,7 @@ namespace DbQueue.EntityFrameworkCore
         public DbqDatabase(DbqDbSettings? settings = null)
         {
             _settings = settings ?? new();
-            _context = new(_settings.ContextConfigurator);
+            _context = new(_settings);
         }
 
         readonly DbqDbContext _context;

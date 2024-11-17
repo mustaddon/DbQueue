@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace DbQueue.EntityFrameworkCore
 {
@@ -7,24 +6,27 @@ namespace DbQueue.EntityFrameworkCore
 
     internal class DbqDbContext : DbContext
     {
-        public DbqDbContext(DfsDbContextConfigurator configurator)
+        public DbqDbContext(DbqDbSettings settings)
         {
-            _configurator = configurator;
+            _settings = settings;
 
             DbQueue = Set<EfcItem>();
         }
 
-        readonly DfsDbContextConfigurator _configurator;
+        readonly DbqDbSettings _settings;
 
         public DbSet<EfcItem> DbQueue { get; private set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => _configurator(optionsBuilder);
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => _settings.ContextConfigurator(optionsBuilder);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<EfcItem>().Property(p => p.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<EfcItem>().Property(p => p.LockId).IsConcurrencyToken();
-            
+            var typeBuilder = modelBuilder.Entity<EfcItem>();
+
+            typeBuilder.ToTable(_settings.TableName);
+            typeBuilder.Property(p => p.Id).ValueGeneratedOnAdd();
+            typeBuilder.Property(p => p.LockId).IsConcurrencyToken();
+
             base.OnModelCreating(modelBuilder);
         }
 

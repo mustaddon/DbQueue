@@ -89,7 +89,7 @@ namespace Test.Common
                 using (var ms = new MemoryStream())
                 {
                     while (await enumerator.MoveNextAsync())
-                        ms.Write(enumerator.Current);
+                        ms.Write(enumerator.Current, 0, enumerator.Current.Length);
 
                     var result = ms.ToArray();
                     var data = datas[_dbq.StackMode ? datas.Length - index - 1 : index];
