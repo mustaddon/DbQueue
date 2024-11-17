@@ -34,7 +34,10 @@ namespace DbQueue
 
         public void Dispose()
         {
-            if (_client.IsValueCreated) _client.Value.Dispose();
+            if (_client.IsValueCreated) 
+                _client.Value.Dispose();
+
+            GC.SuppressFinalize(this);
         }
 
         public async Task Clear(string queue, IEnumerable<string>? types = null, CancellationToken cancellationToken = default)

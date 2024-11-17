@@ -16,13 +16,19 @@ namespace DbQueue.EntityFrameworkCore
         {
             _settings = settings ?? new();
             _context = new(_settings);
+            _concurrentSql = new(() => SqlConcurrency.GetAndLock(_context.Database.ProviderName, _settings.TableName));
         }
 
         readonly DbqDbContext _context;
         readonly DbqDbSettings _settings;
         readonly Random _rnd = new();
+        readonly Lazy<string?> _concurrentSql;
 
-        public void Dispose() => _context.Dispose();
+        public void Dispose()
+        {
+            _context.Dispose();
+            GC.SuppressFinalize(this);
+        }
 
         public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
         {
@@ -54,11 +60,10 @@ namespace DbQueue.EntityFrameworkCore
 
             var lockId = DateTime.UtcNow.Ticks + _rnd.Next(-5000, 5000);
             var lockLimit = DateTime.UtcNow.Add(-_settings.AutoUnlockDelay).Ticks;
-            var concurrentGetAndLock = SqlConcurrency.GetAndLock(_context.Database.ProviderName);
-
-            if (concurrentGetAndLock != null)
+            
+            if (_concurrentSql.Value != null)
                 return Map((await _context.DbQueue
-                    .FromSqlRaw(concurrentGetAndLock, queue, desc, index, lockId, lockLimit, DateTime.UtcNow.Ticks)
+                    .FromSqlRaw(_concurrentSql.Value, queue, desc, index, lockId, lockLimit, DateTime.UtcNow.Ticks)
                     .AsNoTracking()
                     .ToListAsync(cancellationToken))
                     .SingleOrDefault());

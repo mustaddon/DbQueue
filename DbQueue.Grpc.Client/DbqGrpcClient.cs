@@ -27,7 +27,10 @@ namespace DbQueue
 
         public void Dispose()
         {
-            if (_channel.IsValueCreated) _channel.Value.Dispose();
+            if (_channel.IsValueCreated) 
+                _channel.Value.Dispose();
+
+            GC.SuppressFinalize(this);
         }
 
         public async Task Push(IEnumerable<string> queues, IAsyncEnumerator<byte[]> data, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
