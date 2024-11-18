@@ -26,7 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
 
-        static Dbq CreateDbq(IServiceProvider x, Action<IServiceProvider, DbqEfcOptions> optionsBuilder, bool stackMode)
+        static DbqEfc CreateDbq(IServiceProvider x, Action<IServiceProvider, DbqEfcOptions> optionsBuilder, bool stackMode)
         {
             var options = new DbqEfcOptions();
             optionsBuilder?.Invoke(x, options);

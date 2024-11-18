@@ -16,13 +16,13 @@ namespace DbQueue.EntityFrameworkCore
         {
             _settings = settings ?? new();
             _context = new(_settings);
-            _concurrentSql = new(() => SqlConcurrency.GetAndLock(_context.Database.ProviderName, _settings.TableName));
+            _concurrentSql = SqlConcurrency.GetAndLock(_context.Database.ProviderName, _settings.TableName);
         }
 
         readonly DbqDbContext _context;
         readonly DbqDbSettings _settings;
         readonly Random _rnd = new();
-        readonly Lazy<string?> _concurrentSql;
+        readonly string? _concurrentSql;
 
         public void Dispose()
         {
@@ -61,9 +61,9 @@ namespace DbQueue.EntityFrameworkCore
             var lockId = DateTime.UtcNow.Ticks + _rnd.Next(-5000, 5000);
             var lockLimit = DateTime.UtcNow.Add(-_settings.AutoUnlockDelay).Ticks;
             
-            if (_concurrentSql.Value != null)
+            if (_concurrentSql != null)
                 return Map((await _context.DbQueue
-                    .FromSqlRaw(_concurrentSql.Value, queue, desc, index, lockId, lockLimit, DateTime.UtcNow.Ticks)
+                    .FromSqlRaw(_concurrentSql, queue, desc, index, lockId, lockLimit, DateTime.UtcNow.Ticks)
                     .AsNoTracking()
                     .ToListAsync(cancellationToken))
                     .SingleOrDefault());

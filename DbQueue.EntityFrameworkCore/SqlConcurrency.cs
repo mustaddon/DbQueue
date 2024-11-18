@@ -1,8 +1,17 @@
-﻿namespace DbQueue.EntityFrameworkCore
+﻿using System.Collections.Concurrent;
+
+namespace DbQueue.EntityFrameworkCore
 {
     internal class SqlConcurrency
     {
         public static string? GetAndLock(string? providerName, string tableName)
+        {
+            return _cache.GetOrAdd(new { providerName, tableName }, k => GetValue(providerName, tableName));
+        }
+
+        static readonly ConcurrentDictionary<object, string?> _cache = new();
+
+        static string? GetValue(string? providerName, string tableName)
         {
             if (providerName == "Microsoft.EntityFrameworkCore.SqlServer")
                 return $@";WITH cte AS (
