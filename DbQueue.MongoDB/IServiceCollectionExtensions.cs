@@ -1,13 +1,13 @@
 ﻿using DbQueue;
-using DbQueue.EntityFrameworkCore;
+using DbQueue.MongoDB;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class DbqEfcExtensions
+public static class DbqMongoExtensions
 {
-    public static IServiceCollection AddDbqEfc(this IServiceCollection services,
-        Action<IServiceProvider, DbqEfcOptions> optionsBuilder,
+    public static IServiceCollection AddDbqMongo(this IServiceCollection services,
+        Action<IServiceProvider, DbqMongoOptions>? optionsBuilder = null,
         ServiceLifetime lifetime = ServiceLifetime.Transient)
     {
         services.Add(new ServiceDescriptor(typeof(IDbQueue), x => CreateDbq(x, optionsBuilder, false), lifetime));
@@ -15,9 +15,9 @@ public static class DbqEfcExtensions
         return services;
     }
 
-    public static IServiceCollection AddKeyedDbqEfc(this IServiceCollection services,
+    public static IServiceCollection AddKeyedDbqMongo(this IServiceCollection services,
         object? serviceKey,
-        Action<IServiceProvider, DbqEfcOptions> optionsBuilder,
+        Action<IServiceProvider, DbqMongoOptions>? optionsBuilder = null,
         ServiceLifetime lifetime = ServiceLifetime.Transient)
     {
         services.Add(new ServiceDescriptor(typeof(IDbQueue), serviceKey, (x, k) => CreateDbq(x, optionsBuilder, false), lifetime));
@@ -25,9 +25,9 @@ public static class DbqEfcExtensions
         return services;
     }
 
-    static DbqEfc CreateDbq(IServiceProvider x, Action<IServiceProvider, DbqEfcOptions> optionsBuilder, bool stackMode)
+    static DbqMongo CreateDbq(IServiceProvider x, Action<IServiceProvider, DbqMongoOptions>? optionsBuilder, bool stackMode)
     {
-        var options = new DbqEfcOptions();
+        var options = new DbqMongoOptions();
         optionsBuilder?.Invoke(x, options);
 
         return new(

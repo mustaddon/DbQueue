@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DbQueue.MongoDB
 {
-    public class DbqDatabase : IDbqDatabase
+    public class DbqDatabase : IDbqDatabase, IDisposable
     {
         public DbqDatabase(DbqDbSettings? settings = null)
         {
@@ -26,6 +26,14 @@ namespace DbQueue.MongoDB
         readonly DbqDbSettings _settings;
         readonly Lazy<IMongoCollection<MongoItem>> _dbItems;
         readonly Random _rnd = new();
+
+        public void Dispose()
+        {
+            if (_dbItems.IsValueCreated)
+                _dbItems.Value.Database.Client.Dispose();
+
+            GC.SuppressFinalize(this);
+        }
 
 
         public async Task Add(IEnumerable<string> queues, byte[] data, bool isBlob, string? type = null, DateTime? availableAfter = null, DateTime? removeAfter = null, CancellationToken cancellationToken = default)
