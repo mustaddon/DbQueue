@@ -4,10 +4,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // add services to the container
 builder.Services.AddGrpc(options => options.EnableDetailedErrors = true);
-builder.Services.AddDbqEfc((services, options) =>
+builder.Services.AddDbqEfc(options =>
 {
     // add database provider 
-    var connectionString = services.GetRequiredService<IConfiguration>().GetConnectionString("dbq");
+    var connectionString = builder.Configuration.GetConnectionString("dbq");
     options.Database.ContextConfigurator = (db) => db.UseSqlServer(connectionString);
 
     // add blob's path construction algorithm 

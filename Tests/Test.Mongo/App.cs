@@ -11,7 +11,7 @@ namespace Test.Mongo
             var builder = Host.CreateDefaultBuilder()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddDbqMongo(null, ServiceLifetime.Transient);
+                    services.AddDbqMongo();
                 });
 
             return builder.Build();

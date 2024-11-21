@@ -66,7 +66,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 // add services to the container
 var services = new ServiceCollection()
-    .AddDbqEfc((sp, options) =>
+    .AddDbqEfc(options =>
     {
         // add database provider 
         options.Database.ContextConfigurator = (db) => db.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DbqDatabase;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False");

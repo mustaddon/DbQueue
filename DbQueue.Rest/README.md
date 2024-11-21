@@ -24,7 +24,7 @@ Program.cs:
 var builder = WebApplication.CreateBuilder(args);
 
 // add services to the container
-builder.Services.AddDbqMongo((services, options) =>
+builder.Services.AddDbqMongo(options =>
 {
     // add database settings 
     options.Database.ConnectionString = "mongodb://localhost:27017";

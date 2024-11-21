@@ -10,7 +10,7 @@ var app = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         // add services to the container
-        services.AddDbqEfc((sp, options) =>
+        services.AddDbqEfc(options =>
         {
             var connectionString = hostContext.Configuration.GetConnectionString("dbq");
 

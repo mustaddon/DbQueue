@@ -13,10 +13,10 @@ namespace Test.EFCore
             var builder = Host.CreateDefaultBuilder()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddDbqEfc((sp, options) =>
+                    services.AddDbqEfc(options =>
                     {
                         options.Database.ContextConfigurator = (db) => db.UseMySQL(hostContext.Configuration.GetConnectionString("dbq"));
-                    }, ServiceLifetime.Transient);
+                    });
                 });
 
             return builder.Build();
@@ -27,11 +27,11 @@ namespace Test.EFCore
             var builder = Host.CreateDefaultBuilder()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddDbqEfc((sp, options) =>
+                    services.AddDbqEfc(options =>
                     {
                         var connectionString = hostContext.Configuration.GetConnectionString("dbq");
                         options.Database.ContextConfigurator = (db) => db.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-                    }, ServiceLifetime.Transient);
+                    });
                 });
 
             return builder.Build();

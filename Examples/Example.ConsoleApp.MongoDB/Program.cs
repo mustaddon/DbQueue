@@ -9,7 +9,7 @@ var app = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         // add services to the container
-        services.AddDbqMongo((sp, options) =>
+        services.AddDbqMongo(options =>
         {
             // add database settings 
             options.Database.ConnectionString = hostContext.Configuration.GetConnectionString("dbq");

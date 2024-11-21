@@ -13,10 +13,10 @@ namespace Test.EFCore
             var builder = Host.CreateDefaultBuilder()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddDbqEfc((sp, options) =>
+                    services.AddDbqEfc(options =>
                     {
                         options.Database.ContextConfigurator = (db) => db.UseNpgsql(hostContext.Configuration.GetConnectionString("dbq"));
-                    }, ServiceLifetime.Transient);
+                    });
                 });
 
             return builder.Build();
